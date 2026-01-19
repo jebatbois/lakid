@@ -17,9 +17,19 @@ Route::get('/dashboard', function () {
     }
 
     $user = Auth::user();
-    $pengajuans = $user->pengajuans()
-        ->latest()
-        ->paginate(10);
+        // 1. Jika Login sebagai ADMIN UTAMA
+        if ($user && $user->email === 'admin@lakid.kepri.prov.go.id') {
+            return redirect()->route('admin.dashboard');
+        }
+
+        // 2. Jika Login sebagai PIMPINAN (KADIS)
+        if ($user && $user->email === 'kadis@lakid.kepri.prov.go.id') {
+            return redirect()->route('pimpinan.dashboard');
+        }
+
+        // 3. Jika User Biasa (Masyarakat)
+        // Ambil data pengajuan milik user tersebut saja
+        $pengajuans = \App\Models\Pengajuan::where('user_id', Auth::id())->latest()->get();
 
     return view('dashboard', compact('pengajuans'));
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -40,6 +50,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/bantuan', function () {
         return view('bantuan');
     })->name('bantuan');
+
+    // Route Khusus Dashboard Pimpinan
+    Route::get('/pimpinan-dashboard', [App\Http\Controllers\PimpinanController::class, 'index'])
+        ->middleware(['auth', 'verified'])
+        ->name('pimpinan.dashboard');
+
+    // Route Export PDF (View Cetak)
+    Route::get('/pimpinan/cetak', [App\Http\Controllers\PimpinanController::class, 'cetakPdf'])
+        ->middleware(['auth', 'verified'])
+        ->name('pimpinan.cetak');
+
+    // Route Export Excel (CSV)
+    Route::get('/pimpinan/excel', [App\Http\Controllers\PimpinanController::class, 'exportExcel'])
+        ->middleware(['auth', 'verified'])
+        ->name('pimpinan.excel');
 });
 
 // Admin Routes (Protected by isAdmin middleware)

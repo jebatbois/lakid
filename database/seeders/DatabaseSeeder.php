@@ -17,9 +17,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // Contoh user biasa
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        // Akun Pimpinan (Kepala Dinas)
+        // NOTE: Migration default tidak punya kolom 'role', jadi jangan set 'role' jika belum ada.
+        User::factory()->create([
+            'name' => 'Bapak Kepala Dinas',
+            'email' => 'kadis@lakid.kepri.prov.go.id',
+            'password' => bcrypt('password'), // Password standar
         ]);
     }
 }
