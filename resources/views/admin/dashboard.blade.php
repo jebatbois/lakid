@@ -5,7 +5,7 @@
                 {{ __('Dashboard Admin Dinas') }}
             </h2>
             <div class="text-sm text-gray-600 dark:text-gray-400">
-                Total Pengajuan: <span class="font-bold text-lg">{{ count($pengajuans) }}</span>
+                Total Pengajuan: <span class="font-bold text-lg">{{ $pengajuans->total() }}</span>
             </div>
         </div>
     </x-slot>
@@ -23,6 +23,35 @@
                     {{ session('error') }}
                 </div>
             @endif
+
+            {{-- TOOLBAR PENCARIAN & FILTER --}}
+            <div class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                <form action="{{ route('admin.dashboard') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pemohon atau merek..." class="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-10">
+                    </div>
+
+                    <div class="w-full md:w-48">
+                        <select name="status" onchange="this.form.submit()" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-10">
+                            <option value="">Semua Status</option>
+                            <option value="Draft" {{ request('status') == 'Draft' ? 'selected' : '' }}>Draft (Kuning)</option>
+                            <option value="Diajukan" {{ request('status') == 'Diajukan' ? 'selected' : '' }}>Diajukan (Biru)</option>
+                            <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>Disetujui (Hijau)</option>
+                            <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak (Merah)</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="submit" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition">Filter</button>
+                        @if(request('search') || request('status'))
+                            <a href="{{ route('admin.dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded transition flex items-center h-10 border border-gray-300">Reset</a>
+                        @endif
+                    </div>
+                </form>
+            </div>
 
             <div class="overflow-x-auto bg-white rounded-lg shadow">
                 <table class="w-full divide-y divide-gray-200 table-fixed">
@@ -93,6 +122,10 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="mt-4 px-2">
+                {{ $pengajuans->withQueryString()->links() }}
             </div>
         </div>
     </div>

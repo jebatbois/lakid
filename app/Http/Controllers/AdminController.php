@@ -7,10 +7,33 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil semua data, urutkan terbaru, load relasi User biar hemat query
-        $pengajuans = Pengajuan::with('user')->latest()->get();
+        // Ambil input pencarian dan filter dari URL
+        $search = $request->input('search');
+        $status = $request->input('status');
+
+        // Query Dasar
+        $query = Pengajuan::with('user')->latest();
+
+        // Jika ada pencarian (Nama merek atau nama user)
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_merek', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($u) use ($search) {
+                      $u->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Jika ada filter status
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        // Ambil data dengan paginasi
+        $pengajuans = $query->paginate(10)->withQueryString();
+
         return view('admin.dashboard', compact('pengajuans'));
     }
 
