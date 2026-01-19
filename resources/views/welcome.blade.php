@@ -199,21 +199,33 @@
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-white py-10">
+    <footer class="bg-gray-900 text-white py-10 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-6 md:mb-0">
-                    <span class="font-bold text-2xl">LAKID</span>
-                    <p class="text-gray-400 text-sm mt-1">Dinas Pariwisata Provinsi Kepulauan Riau</p>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                
+                {{-- Bagian Logo & Identitas (Updated) --}}
+                <div class="mb-6 md:mb-0 flex items-center gap-4">
+                    {{-- Logo Kepri --}}
+                    <img src="{{ asset('img/logo-kepri.png') }}" alt="Logo Kepri" class="w-12 h-auto">
+                    
+                    {{-- Teks Dinas --}}
+                    <div>
+                        <span class="font-bold text-2xl block leading-none tracking-tight">LAKID</span>
+                        <p class="text-gray-400 text-sm mt-1">Dinas Pariwisata Provinsi Kepulauan Riau</p>
+                    </div>
                 </div>
-                <div class="flex space-x-6 text-sm">
-                    <a href="#" class="hover:text-blue-400 transition">Kebijakan Privasi</a>
-                    <a href="#" class="hover:text-blue-400 transition">Syarat & Ketentuan</a>
-                    <a href="#" class="hover:text-blue-400 transition">Kontak</a>
+
+                {{-- Bagian Menu Footer (Berfungsi) --}}
+                <div class="flex flex-wrap justify-center gap-6 text-sm">
+                    <a href="{{ route('privacy') }}" class="text-gray-400 hover:text-white transition duration-150 ease-in-out">Kebijakan Privasi</a>
+                    <a href="{{ route('terms') }}" class="text-gray-400 hover:text-white transition duration-150 ease-in-out">Syarat & Ketentuan</a>
+                    {{-- Link Kontak mengarah ke Section Bantuan/WA --}}
+                    <a href="#layanan" class="text-gray-400 hover:text-white transition duration-150 ease-in-out">Kontak Kami</a>
                 </div>
             </div>
+
             <div class="border-t border-gray-800 mt-8 pt-8 text-center text-xs text-gray-500">
-                &copy; 2026 Pemerintah Provinsi Kepulauan Riau. All rights reserved.
+                &copy; {{ date('Y') }} Pemerintah Provinsi Kepulauan Riau. All rights reserved.
             </div>
         </div>
     </footer>

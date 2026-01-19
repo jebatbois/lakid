@@ -50,3 +50,7 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Halaman Statis Footer
+Route::view('/kebijakan-privasi', 'privacy')->name('privacy');
+Route::view('/syarat-ketentuan', 'terms')->name('terms');
