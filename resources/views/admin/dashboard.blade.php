@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-2xl text-gray-900 dark:text-gray-100 leading-tight">
+            <h2 class="font-semibold text-2xl text-gray-900 dark:text-gray-900 leading-tight">
                 {{ __('Dashboard Admin Dinas') }}
             </h2>
             <div class="text-sm text-gray-600 dark:text-gray-400">
