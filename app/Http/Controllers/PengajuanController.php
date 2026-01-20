@@ -28,103 +28,82 @@ class PengajuanController extends Controller
     /**
      * Store a newly created pengajuan in storage.
      */
-    public function store(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'nama_merek' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-            'jenis' => [
-                'required',
-                'string',
-                'in:Merek,Hak Cipta,Desain Industri',
-            ],
-            'deskripsi_karya' => [
-                'required',
-                'string',
-                'min:20',
-                'max:1000',
-            ],
-            'file_logo' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,png,jpg,gif',
-                'max:2048',
-            ],
-            'file_ktp' => [
-                'nullable',
-                'file',
-                'mimes:jpeg,png,jpg,pdf',
-                'max:2048',
-            ],
-            'file_surat_umk' => [
-                'nullable',
-                'file',
-                'mimes:pdf,jpeg,png,jpg',
-                'max:2048',
-            ],
-        ], [
-            'nama_merek.required' => 'Nama merek/karya wajib diisi.',
-            'nama_merek.max' => 'Nama merek/karya tidak boleh lebih dari 255 karakter.',
-            'jenis.required' => 'Jenis HKI wajib dipilih.',
-            'jenis.in' => 'Jenis HKI tidak valid.',
-            'deskripsi_karya.required' => 'Deskripsi karya wajib diisi.',
-            'deskripsi_karya.min' => 'Deskripsi karya minimal 20 karakter.',
-            'file_logo.image' => 'File logo harus berupa gambar.',
-            'file_logo.mimes' => 'Format file logo harus JPEG, PNG, JPG, atau GIF.',
-            'file_logo.max' => 'Ukuran file logo tidak boleh lebih dari 2MB.',
-            'file_ktp.mimes' => 'Format file KTP harus JPEG, PNG, JPG, atau PDF.',
-            'file_ktp.max' => 'Ukuran file KTP tidak boleh lebih dari 2MB.',
-            'file_surat_umk.file' => 'File surat UMK harus berupa file.',
-            'file_surat_umk.mimes' => 'Format file surat UMK harus PDF, JPEG, PNG, atau JPG.',
-            'file_surat_umk.max' => 'Ukuran file surat UMK tidak boleh lebih dari 2MB.',
-        ]);
+public function store(Request $request)
+{
+    // 1. Validasi Input (Tambahkan field baru)
+    $rules = [
+        'jenis' => 'required',
+        'deskripsi_karya' => 'required',
+        // Dokumen Wajib Umum
+        'file_ktp'              => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'file_npwp'             => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'file_surat_permohonan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'file_cv'               => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', // CV maks 5MB
+        'file_surat_umk'        => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        'file_foto_produk'      => 'required|file|mimes:jpg,jpeg,png|max:5120', // Foto maks 5MB
+    ];
 
-        $pengajuan_data = [
-            'user_id' => Auth::id(),
-            'nama_merek' => $validated['nama_merek'],
-            'jenis' => $validated['jenis'],
-            'deskripsi_karya' => $validated['deskripsi_karya'],
-            'status' => 'Draft',
-        ];
+    // Validasi Khusus
+    if ($request->jenis == 'Merek') {
+        $rules['nama_merek'] = 'required';
+        $rules['file_logo'] = 'required|file|mimes:jpg,jpeg,png|max:2048';
+    } elseif ($request->jenis == 'Hak Cipta') {
+        $rules['judul_ciptaan'] = 'required';
+        $rules['file_karya'] = 'required|file|mimes:mp3,pdf,mp4,doc,docx|max:20480';
+    }
 
-        // Handle file uploads
+    $request->validate($rules);
+
+    // 2. Siapkan Data Dasar
+    $data = [
+        'user_id' => Auth::id(),
+        'jenis' => $request->jenis,
+        'deskripsi_karya' => $request->deskripsi_karya,
+        'status' => 'Diajukan', // Status awal
+    ];
+
+    // 3. Fungsi Helper Upload (Biar kodenya rapi)
+    // Simpan file ke folder public storage
+    if ($request->hasFile('file_ktp')) {
+        $data['file_ktp'] = $request->file('file_ktp')->store('dokumen_ktp', 'public');
+    }
+    if ($request->hasFile('file_npwp')) {
+        $data['file_npwp'] = $request->file('file_npwp')->store('dokumen_npwp', 'public');
+    }
+    if ($request->hasFile('file_surat_permohonan')) {
+        $data['file_surat_permohonan'] = $request->file('file_surat_permohonan')->store('dokumen_permohonan', 'public');
+    }
+    if ($request->hasFile('file_cv')) {
+        $data['file_cv'] = $request->file('file_cv')->store('dokumen_cv', 'public');
+    }
+    if ($request->hasFile('file_surat_umk')) {
+        $data['file_surat_umk'] = $request->file('file_surat_umk')->store('dokumen_umk', 'public');
+    }
+    if ($request->hasFile('file_foto_produk')) {
+        $data['file_foto_produk'] = $request->file('file_foto_produk')->store('dokumen_produk', 'public');
+    }
+
+    // 4. Upload Khusus Merek
+    if ($request->jenis == 'Merek') {
+        $data['nama_merek'] = $request->nama_merek;
         if ($request->hasFile('file_logo')) {
-            $pengajuan_data['file_logo'] = $request->file('file_logo')
-                ->store('uploads', 'public');
+            $data['file_logo'] = $request->file('file_logo')->store('dokumen_logo', 'public');
         }
-
-        if ($request->hasFile('file_ktp')) {
-            $pengajuan_data['file_ktp'] = $request->file('file_ktp')
-                ->store('uploads', 'public');
-        }
-
-        if ($request->hasFile('file_surat_umk')) {
-            $pengajuan_data['file_surat_umk'] = $request->file('file_surat_umk')
-                ->store('uploads', 'public');
-        }
-
-        Pengajuan::create($pengajuan_data);
-
-        return redirect()
-            ->route('dashboard')
-            ->with('success', 'Pengajuan berhasil dibuat dan disimpan sebagai Draft.');
     }
 
-    /**
-     * Display the specified pengajuan.
-     */
-    public function show(Pengajuan $pengajuan): View
-    {
-        // Authorization: user can only view their own pengajuans
-        if ($pengajuan->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized access.');
+    // 5. Upload Khusus Hak Cipta
+    if ($request->jenis == 'Hak Cipta') {
+        $data['nama_merek'] = $request->judul_ciptaan; // Simpan judul ke kolom nama_merek
+        if ($request->hasFile('file_karya')) {
+            $data['file_karya'] = $request->file('file_karya')->store('dokumen_karya', 'public');
         }
-
-        return view('pengajuan.show', compact('pengajuan'));
     }
+
+    // 6. Simpan ke Database
+    Pengajuan::create($data);
+
+    return redirect()->route('dashboard')->with('success', 'Pengajuan berhasil dikirim! Silakan tunggu verifikasi admin.');
+}
 
     /**
      * Show the form for editing a pengajuan.
@@ -228,31 +207,40 @@ class PengajuanController extends Controller
     /**
      * Delete the specified pengajuan from storage.
      */
-    public function destroy(Pengajuan $pengajuan): RedirectResponse
+   public function destroy(Pengajuan $pengajuan)
     {
-        // Authorization
-        if ($pengajuan->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized access.');
+        // 1. Cek Kepemilikan (Security)
+        if ($pengajuan->user_id !== \Illuminate\Support\Facades\Auth::id()) {
+            abort(403, 'Unauthorized action.');
         }
 
-        if ($pengajuan->status !== 'Draft') {
-            abort(403, 'Hanya pengajuan Draft yang dapat dihapus.');
+        // 2. Cek Status (Hanya boleh hapus jika belum diproses jauh)
+        if ($pengajuan->status == 'Disetujui' || $pengajuan->status == 'Ditolak') {
+            return back()->with('error', 'Pengajuan yang sudah selesai tidak dapat dibatalkan.');
         }
 
-        // Delete files
-        if ($pengajuan->file_logo) {
-            Storage::disk('public')->delete($pengajuan->file_logo);
+        // 3. Hapus File Fisik dari Storage (Agar server bersih)
+        $files = [
+            $pengajuan->file_logo,
+            $pengajuan->file_karya,
+            $pengajuan->file_ktp,
+            $pengajuan->file_npwp,
+            $pengajuan->file_surat_permohonan,
+            $pengajuan->file_cv,
+            $pengajuan->file_surat_umk,
+            $pengajuan->file_foto_produk
+        ];
+
+        foreach ($files as $file) {
+            if ($file && \Illuminate\Support\Facades\Storage::disk('public')->exists($file)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($file);
+            }
         }
 
-        if ($pengajuan->file_ktp) {
-            Storage::disk('public')->delete($pengajuan->file_ktp);
-        }
-
+        // 4. Hapus Data dari Database
         $pengajuan->delete();
 
-        return redirect()
-            ->route('dashboard')
-            ->with('success', 'Pengajuan berhasil dihapus.');
+        return redirect()->route('dashboard')->with('success', 'Pengajuan berhasil dibatalkan dan dihapus.');
     }
 
     /**
@@ -276,4 +264,31 @@ class PengajuanController extends Controller
             ->route('pengajuan.show', $pengajuan)
             ->with('success', 'Pengajuan berhasil diajukan untuk ditinjau.');
     }
+
+    /**
+     * Menampilkan detail pengajuan spesifik untuk User pemiliknya.
+     */
+    public function show(Pengajuan $pengajuan)
+    {
+        // Ambil User yang sedang login
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // LOGIKA KEAMANAN BARU:
+        // Izinkan jika: 
+        // 1. Dia adalah pemilik pengajuan (user_id sama)
+        // 2. ATAU Dia adalah Admin (email admin)
+        // 3. ATAU Dia adalah Pimpinan (email kadis)
+        
+        $isOwner = $pengajuan->user_id === $user->id;
+        $isAdmin = $user->email === 'admin@lakid.kepri.prov.go.id';
+        $isKadis = $user->email === 'kadis@lakid.kepri.prov.go.id';
+
+        if (! $isOwner && ! $isAdmin && ! $isKadis) {
+            abort(403, 'Anda tidak memiliki akses untuk melihat pengajuan ini.');
+        }
+
+        return view('pengajuan.show', compact('pengajuan'));
+    }
+
+
 }

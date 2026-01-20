@@ -11,17 +11,27 @@ class Pengajuan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'nama_merek',
-        'jenis',
-        'deskripsi_karya',
-        'status',
-        'file_logo',
-        'file_ktp',
-        'file_surat_umk',
-        'catatan_admin',
-        'file_surat_rekomendasi',
-    ];
+    'user_id',
+    'nama_merek',
+    'jenis', // Merek / Hak Cipta
+    'deskripsi_karya',
+    'status',
+    
+    // File Lama
+    'file_logo',
+    'file_ktp',
+    'file_surat_rekomendasi', // Dari Admin
+    'catatan_admin',          // Dari Admin
+
+    // FILE BARU (Wajib Ditambahkan!)
+    'judul_ciptaan',
+    'file_karya',             // File Lagu/Naskah
+    'file_surat_permohonan',
+    'file_cv',
+    'file_npwp',
+    'file_foto_produk',
+    'file_surat_umk',
+];
 
     protected $casts = [
         'created_at' => 'datetime',

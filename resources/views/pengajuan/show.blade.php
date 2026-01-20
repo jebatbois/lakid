@@ -1,154 +1,216 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
-                {{ __('Detail Pengajuan') }}
-            </h2>
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-                Kembali
-            </a>
-        </div>
+        <h2 class="font-bold text-xl text-gray-900 leading-tight">
+            {{ __('Detail Pengajuan Saya') }}
+        </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             
-            {{-- Success Alert & Download Surat Rekomendasi --}}
-            @if($pengajuan->status == 'Disetujui')
-                <div class="bg-green-50 border-l-4 border-green-500 text-green-800 p-6 mb-6 rounded shadow-sm">
-                    <h3 class="font-bold text-lg mb-2">✅ Selamat! Pengajuan Anda Disetujui</h3>
-                    <p class="mb-4 text-sm">Silakan unduh surat rekomendasi di bawah ini untuk digunakan saat pendaftaran HKI di Kemenkumham.</p>
-                    
-                    @if($pengajuan->file_surat_rekomendasi)
-                        <a href="{{ asset('storage/'.$pengajuan->file_surat_rekomendasi) }}" download class="inline-flex items-center px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            📥 DOWNLOAD SURAT REKOMENDASI DINAS
-                        </a>
-                    @else
-                        <p class="text-sm text-red-600 font-semibold">⚠️ File surat belum diupload. Hubungi Dinas LAKID Kepri.</p>
-                    @endif
-                </div>
-            @endif
+            {{-- TOMBOL NAVIGASI ATAS --}}
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                {{-- Tombol Kembali --}}
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center text-gray-600 hover:text-blue-600 font-medium transition self-start md:self-auto">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Kembali ke Dashboard
+                </a>
 
-            {{-- Status Alert --}}
-            @php
-                $statusConfig = [
-                    'Draft' => ['bg' => 'bg-yellow-50', 'border' => 'border-yellow-500', 'text' => 'text-yellow-800', 'icon' => '📝'],
-                    'Diajukan' => ['bg' => 'bg-blue-50', 'border' => 'border-blue-500', 'text' => 'text-blue-800', 'icon' => '⏳'],
-                    'Ditinjau' => ['bg' => 'bg-purple-50', 'border' => 'border-purple-500', 'text' => 'text-purple-800', 'icon' => '🔍'],
-                    'Disetujui' => ['bg' => 'bg-green-50', 'border' => 'border-green-500', 'text' => 'text-green-800', 'icon' => '✅'],
-                    'Ditolak' => ['bg' => 'bg-red-50', 'border' => 'border-red-500', 'text' => 'text-red-800', 'icon' => '❌'],
-                ];
-                $config = $statusConfig[$pengajuan->status] ?? ['bg' => 'bg-gray-50', 'border' => 'border-gray-500', 'text' => 'text-gray-800', 'icon' => '❓'];
-            @endphp
-            <div class="mb-6 p-6 {{ $config['bg'] }} border-l-4 {{ $config['border'] }} rounded {{ $config['text'] }} shadow-sm">
-                <div class="font-bold text-lg mb-2">{{ $config['icon'] }} Status: {{ $pengajuan->status }}</div>
-                <div class="text-sm opacity-90">Tanggal Pengajuan: {{ $pengajuan->created_at->format('d M Y H:i') }}</div>
-                @if($pengajuan->catatan_admin)
-                    <div class="mt-4 pt-4 border-t {{ $config['border'] }} opacity-75">
-                        <div class="font-semibold mb-2">💬 Catatan dari Dinas:</div>
-                        <p class="text-sm">{{ $pengajuan->catatan_admin }}</p>
-                    </div>
+                {{-- TOMBOL BATAL AJUKAN (Hanya muncul jika status Diajukan/Draft) --}}
+                @if($pengajuan->status == 'Diajukan' || $pengajuan->status == 'Draft')
+                    <form action="{{ route('pengajuan.destroy', $pengajuan->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pengajuan ini? Data dan file akan dihapus permanen.');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-4 rounded-lg border border-red-200 shadow-sm transition flex items-center gap-2 text-sm">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            Batalkan & Hapus Pengajuan
+                        </button>
+                    </form>
                 @endif
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg p-8 space-y-8">
-                {{-- Merek Info --}}
-                <div class="border-t-2 border-slate-200 pt-6 first:border-t-0 first:pt-0">
-                    <h3 class="text-3xl font-bold text-gray-900 mb-2">{{ $pengajuan->nama_merek }}</h3>
-                    <span class="inline-block px-4 py-2 bg-blue-100 text-blue-800 text-sm font-semibold rounded-full">
-                        {{ $pengajuan->jenis }}
-                    </span>
+            {{-- 1. INFORMASI UTAMA & STATUS --}}
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-100 p-8 mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-100 pb-6 mb-6 gap-4">
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-gray-900">{{ $pengajuan->nama_merek }}</h1>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="bg-gray-100 text-gray-800 text-xs font-bold px-3 py-1 rounded-full border border-gray-300 flex items-center gap-1">
+                                @if($pengajuan->jenis == 'Merek') ® @else © @endif
+                                {{ $pengajuan->jenis }}
+                            </span>
+                            <span class="text-sm text-gray-500">Diajukan pada: {{ $pengajuan->created_at->format('d F Y, H:i') }} WIB</span>
+                        </div>
+                    </div>
+                    
+                    {{-- Status Badge --}}
+                    <div class="flex flex-col items-end">
+                        <span class="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Status Pengajuan</span>
+                        @php
+                            $colors = [
+                                'Draft' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                                'Diajukan' => 'bg-blue-100 text-blue-800 border-blue-200',
+                                'Ditinjau' => 'bg-indigo-100 text-indigo-800 border-indigo-200',
+                                'Disetujui' => 'bg-green-100 text-green-800 border-green-200',
+                                'Ditolak' => 'bg-red-100 text-red-800 border-red-200',
+                            ];
+                            $colorClass = $colors[$pengajuan->status] ?? 'bg-gray-100 text-gray-800';
+                        @endphp
+                        <span class="px-4 py-1 rounded-full text-sm font-bold border {{ $colorClass }}">
+                            {{ $pengajuan->status }}
+                        </span>
+                    </div>
                 </div>
 
                 {{-- Deskripsi --}}
-                <div class="border-t-2 border-slate-200 pt-6">
-                    <h4 class="text-lg font-bold text-gray-900 mb-3">📝 Deskripsi Karya</h4>
-                    <p class="text-gray-700 bg-slate-50 p-4 rounded-lg leading-relaxed">
+                <div>
+                    <h3 class="font-bold text-gray-900 text-sm uppercase mb-2">Deskripsi Karya / Usaha</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg text-gray-700 leading-relaxed border border-gray-200">
                         {{ $pengajuan->deskripsi_karya }}
-                    </p>
+                    </div>
                 </div>
+            </div>
 
-                {{-- Files --}}
-                @if($pengajuan->file_logo || $pengajuan->file_ktp || $pengajuan->file_surat_umk)
-                    <div class="border-t-2 border-slate-200 pt-6">
-                        <h4 class="text-lg font-bold text-gray-900 mb-4">📎 Dokumen yang Diupload</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            @if($pengajuan->file_logo)
-                                <div class="border-2 border-blue-300 rounded-lg p-4 hover:shadow-md transition">
-                                    <p class="text-sm font-semibold text-gray-700 mb-3">📷 Logo/Desain</p>
-                                    <img src="{{ Storage::url($pengajuan->file_logo) }}" alt="Logo" class="max-w-full h-auto rounded-lg mb-3 border border-slate-200">
-                                    <a href="{{ Storage::url($pengajuan->file_logo) }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3z"></path>
-                                        </svg>
-                                        📥 Download
-                                    </a>
-                                </div>
-                            @endif
-
-                            @if($pengajuan->file_ktp)
-                                <div class="border-2 border-blue-300 rounded-lg p-4 hover:shadow-md transition">
-                                    <p class="text-sm font-semibold text-gray-700 mb-3">🪪 KTP/Identitas</p>
-                                    <img src="{{ Storage::url($pengajuan->file_ktp) }}" alt="KTP" class="max-w-full h-auto rounded-lg mb-3 border border-slate-200">
-                                    <a href="{{ Storage::url($pengajuan->file_ktp) }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3z"></path>
-                                        </svg>
-                                        📥 Download
-                                    </a>
-                                </div>
-                            @endif
-
-                            @if($pengajuan->file_surat_umk)
-                                <div class="border-2 border-green-300 rounded-lg p-4 hover:shadow-md transition">
-                                    <p class="text-sm font-semibold text-gray-700 mb-3">📄 Surat UMK</p>
-                                    <a href="{{ Storage::url($pengajuan->file_surat_umk) }}" target="_blank" class="inline-flex items-center text-green-600 hover:text-green-800 text-sm font-semibold">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3z"></path>
-                                        </svg>
-                                        📥 Download
-                                    </a>
-                                </div>
-                            @endif
+            {{-- 2. HASIL KELUARAN (SURAT REKOMENDASI) --}}
+            @if($pengajuan->status == 'Disetujui' && $pengajuan->file_surat_rekomendasi)
+                <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-green-900 text-lg">Selamat! Pengajuan Disetujui</h3>
+                            <p class="text-green-700 text-sm">Surat rekomendasi Anda telah terbit. Silakan unduh untuk dibawa ke Kemenkumham.</p>
                         </div>
                     </div>
-                @endif
+                    <a href="{{ asset('storage/'.$pengajuan->file_surat_rekomendasi) }}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Download Surat Rekomendasi
+                    </a>
+                </div>
+            @endif
 
-                {{-- User Action Buttons --}}
-                @if ($pengajuan->status === 'Draft')
-                    <div class="border-t-2 border-slate-200 pt-6 flex gap-3 flex-wrap">
-                        <form action="{{ route('pengajuan.submit', $pengajuan) }}" method="POST" class="flex-1 min-w-[200px]">
-                            @csrf
-                            <button type="submit" class="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-sm hover:shadow flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                ✉️ Ajukan Sekarang
-                            </button>
-                        </form>
-                        <a href="{{ route('pengajuan.edit', $pengajuan) }}" class="flex-1 min-w-[200px] px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition text-center shadow-sm hover:shadow flex items-center justify-center">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                            </svg>
-                            ✏️ Edit
-                        </a>
-                        <form action="{{ route('pengajuan.destroy', $pengajuan) }}" method="POST" class="flex-1 min-w-[200px]" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition shadow-sm hover:shadow flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                </svg>
-                                🗑️ Hapus
-                            </button>
-                        </form>
+            {{-- 3. JIKA DITOLAK (Feedback Admin) --}}
+            @if($pengajuan->status == 'Ditolak')
+                <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+                    <h3 class="font-bold text-red-900 text-lg mb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Alasan Penolakan / Catatan Perbaikan
+                    </h3>
+                    <p class="text-red-700 bg-white p-4 rounded border border-red-100">
+                        {{ $pengajuan->catatan_admin ?? 'Tidak ada catatan dari admin.' }}
+                    </p>
+                </div>
+            @endif
+
+            {{-- 4. BERKAS YANG DIUPLOAD --}}
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-100 p-8">
+                <h3 class="font-bold text-gray-900 text-lg mb-6 flex items-center gap-2 border-b pb-2">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    Berkas Persyaratan Anda
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    {{-- Dinamis: Logo atau File Karya --}}
+                    @if($pengajuan->jenis == 'Merek')
+                        <div class="border rounded-lg p-4 bg-gray-50">
+                            <span class="block text-xs font-bold text-gray-500 uppercase mb-2">Logo Merek</span>
+                            <div class="h-32 bg-white border rounded flex items-center justify-center overflow-hidden mb-2">
+                                <img src="{{ asset('storage/'.$pengajuan->file_logo) }}" class="h-full w-full object-contain">
+                            </div>
+                            <a href="{{ asset('storage/'.$pengajuan->file_logo) }}" target="_blank" class="text-blue-600 text-xs font-bold hover:underline">Lihat File Asli</a>
+                        </div>
+                    @else
+                        <div class="border rounded-lg p-4 bg-gray-50">
+                            <span class="block text-xs font-bold text-gray-500 uppercase mb-2">Sampel Ciptaan</span>
+                            <div class="h-32 bg-white border rounded flex items-center justify-center mb-2">
+                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+                            </div>
+                            <a href="{{ asset('storage/'.$pengajuan->file_karya) }}" target="_blank" class="text-blue-600 text-xs font-bold hover:underline">Download Sampel</a>
+                        </div>
+                    @endif
+
+                    {{-- KTP --}}
+                    <div class="border rounded-lg p-4 bg-gray-50">
+                        <span class="block text-xs font-bold text-gray-500 uppercase mb-2">KTP Pemohon</span>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-white rounded border"><svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg></div>
+                            <span class="text-sm text-gray-700 truncate">File KTP</span>
+                        </div>
+                        <a href="{{ asset('storage/'.$pengajuan->file_ktp) }}" target="_blank" class="text-blue-600 text-xs font-bold hover:underline">Lihat Dokumen</a>
                     </div>
-                @endif
+
+                    {{-- NPWP --}}
+                    <div class="border rounded-lg p-4 bg-gray-50">
+                        <span class="block text-xs font-bold text-gray-500 uppercase mb-2">NPWP</span>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-white rounded border"><svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg></div>
+                            <span class="text-sm text-gray-700 truncate">File NPWP</span>
+                        </div>
+                        <a href="{{ asset('storage/'.$pengajuan->file_npwp) }}" target="_blank" class="text-blue-600 text-xs font-bold hover:underline">Lihat Dokumen</a>
+                    </div>
+
+                    {{-- Surat Permohonan --}}
+                    <div class="border rounded-lg p-4 bg-gray-50">
+                        <span class="block text-xs font-bold text-gray-500 uppercase mb-2">Surat Permohonan</span>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-white rounded border"><svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
+                            <span class="text-sm text-gray-700 truncate">Surat Resmi</span>
+                        </div>
+                        <a href="{{ asset('storage/'.$pengajuan->file_surat_permohonan) }}" target="_blank" class="text-blue-600 text-xs font-bold hover:underline">Lihat Dokumen</a>
+                    </div>
+
+                    {{-- CV / Profil --}}
+                    <div class="border rounded-lg p-4 bg-gray-50">
+                        <span class="block text-xs font-bold text-gray-500 uppercase mb-2">
+                            {{ $pengajuan->jenis == 'Merek' ? 'CV Perusahaan' : 'Profil Pencipta' }}
+                        </span>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-white rounded border"><svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+                            <span class="text-sm text-gray-700 truncate">Profil Usaha</span>
+                        </div>
+                        <a href="{{ asset('storage/'.$pengajuan->file_cv) }}" target="_blank" class="text-blue-600 text-xs font-bold hover:underline">Lihat Dokumen</a>
+                    </div>
+
+                    {{-- Surat Pernyataan --}}
+                    <div class="border rounded-lg p-4 bg-gray-50">
+                        <span class="block text-xs font-bold text-gray-500 uppercase mb-2">
+                            {{ $pengajuan->jenis == 'Merek' ? 'Surat UMK' : 'Surat Keaslian' }}
+                        </span>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-white rounded border"><svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
+                            <span class="text-sm text-gray-700 truncate">Bermaterai</span>
+                        </div>
+                        <a href="{{ asset('storage/'.$pengajuan->file_surat_umk) }}" target="_blank" class="text-blue-600 text-xs font-bold hover:underline">Lihat Dokumen</a>
+                    </div>
+
+  {{-- Foto Produk / Dokumentasi --}}
+                    <div class="border rounded-lg p-4 bg-gray-50">
+                        <span class="block text-xs font-bold text-gray-500 uppercase mb-2">
+                            {{ $pengajuan->jenis == 'Merek' ? 'Foto Produk' : 'Dokumentasi/Cover' }}
+                        </span>
+                        
+                        @if($pengajuan->file_foto_produk)
+                            <div class="h-32 bg-white border rounded flex items-center justify-center overflow-hidden mb-2 relative group">
+                                <img src="{{ asset('storage/'.$pengajuan->file_foto_produk) }}" class="h-full w-full object-cover transition transform group-hover:scale-110">
+                                
+                                {{-- Tombol View Overlay --}}
+                                <a href="{{ asset('storage/'.$pengajuan->file_foto_produk) }}" target="_blank" class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition opacity-0 group-hover:opacity-100">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                </a>
+                            </div>
+                            <a href="{{ asset('storage/'.$pengajuan->file_foto_produk) }}" target="_blank" class="text-blue-600 text-xs font-bold hover:underline block text-center">Lihat Foto Penuh</a>
+                        @else
+                            <div class="h-32 bg-gray-100 border rounded flex items-center justify-center mb-2">
+                                <span class="text-gray-400 text-xs italic">Tidak ada foto</span>
+                            </div>
+                        @endif
+                    </div>
+
+                </div>
             </div>
+
         </div>
     </div>
 </x-app-layout>

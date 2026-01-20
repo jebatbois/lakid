@@ -46,6 +46,10 @@ Route::middleware('auth')->group(function () {
     // Submit pengajuan (change Draft to Diajukan)
     Route::post('/pengajuan/{pengajuan}/submit', [PengajuanController::class, 'submit'])->name('pengajuan.submit');
 
+    // Route Batal/Hapus Pengajuan
+    Route::delete('/pengajuan/{pengajuan}', [App\Http\Controllers\PengajuanController::class, 'destroy'])
+    ->name('pengajuan.destroy');
+    
     // Tambahkan Route Bantuan di sini
     Route::get('/bantuan', function () {
         return view('bantuan');
