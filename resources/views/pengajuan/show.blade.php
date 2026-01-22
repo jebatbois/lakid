@@ -208,6 +208,117 @@
                         @endif
                     </div>
 
+ {{-- TIMELINE KHUSUS FASILITASI (RE-DESIGNED) --}}
+            @if($pengajuan->kategori == 'Fasilitasi')
+                <div class="bg-white rounded-xl border border-gray-200 p-8 mb-8 shadow-sm">
+                    <h3 class="font-bold text-gray-900 text-lg mb-8 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        Tracking Status Fasilitasi
+                    </h3>
+                    
+                    <div class="space-y-0"> @php
+                            // Cek apakah step 2 (DJKI) sudah aktif atau lewat
+                            $isStep2Active = $pengajuan->tahapan_proses == 'Pendaftaran DJKI';
+                            $isStep2Done   = $pengajuan->tahapan_proses == 'Selesai';
+                            
+                            // Cek apakah step 3 (Selesai) sudah tercapai
+                            $isStep3Done   = $pengajuan->tahapan_proses == 'Selesai';
+
+                            // Step 1 selalu dianggap Done jika sudah masuk Step 2/3, atau Active jika belum.
+                            $isStep1Done   = $isStep2Active || $isStep2Done || $isStep3Done; 
+                        @endphp
+
+                        {{-- STEP 1: Verifikasi Internal --}}
+                        <div class="flex gap-x-4 relative">
+                            <div class="absolute left-3.5 top-8 bottom-0 w-0.5 bg-gray-200 -z-10"></div>
+
+                            <div class="relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-gray-200">
+                                <div class="relative z-10 w-8 h-8 flex justify-center items-center">
+                                    @if($isStep1Done)
+                                        <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shadow-md">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
+                                    @else
+                                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center ring-4 ring-blue-100 animate-pulse">
+                                            <span class="text-white text-sm font-bold">1</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="pb-8 pt-0.5">
+                                <h4 class="font-bold text-gray-900 text-md">Verifikasi Berkas Internal</h4>
+                                <p class="text-sm text-gray-500 mt-1">Berkas Anda sedang diperiksa kelengkapannya oleh tim Dinas Pariwisata.</p>
+                            </div>
+                        </div>
+
+                        {{-- STEP 2: Proses di Kemenkumham --}}
+                        <div class="flex gap-x-4 relative">
+                            <div class="absolute left-3.5 top-8 bottom-0 w-0.5 bg-gray-200 -z-10"></div>
+
+                            <div class="relative z-10 w-8 h-8 flex justify-center items-center">
+                                @if($isStep2Done)
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shadow-md">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    </div>
+                                @elseif($isStep2Active)
+                                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center ring-4 ring-blue-100 shadow-lg">
+                                        <span class="text-white text-sm font-bold">2</span>
+                                    </div>
+                                @else
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center border-2 border-white">
+                                        <span class="text-gray-500 text-sm font-bold">2</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="pb-8 pt-0.5">
+                                <h4 class="font-bold {{ $isStep2Active || $isStep2Done ? 'text-gray-900' : 'text-gray-400' }} text-md">
+                                    Proses Pendaftaran DJKI
+                                </h4>
+                                <p class="text-sm {{ $isStep2Active || $isStep2Done ? 'text-gray-600' : 'text-gray-400' }} mt-1">
+                                    Data sedang diinput ke sistem DJKI Kemenkumham oleh Admin Dinas.
+                                </p>
+                                @if($isStep2Active)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 mt-2">
+                                        Sedang Berlangsung
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- STEP 3: Selesai / Sertifikat --}}
+                        <div class="flex gap-x-4 relative">
+                            <div class="relative z-10 w-8 h-8 flex justify-center items-center">
+                                @if($isStep3Done)
+                                    <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center shadow-lg ring-4 ring-green-100">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                    </div>
+                                @else
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center border-2 border-white">
+                                        <span class="text-gray-500 text-sm font-bold">3</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="pt-0.5">
+                                <h4 class="font-bold {{ $isStep3Done ? 'text-gray-900' : 'text-gray-400' }} text-md">
+                                    Selesai / Sertifikat Terbit
+                                </h4>
+                                <p class="text-sm {{ $isStep3Done ? 'text-gray-600' : 'text-gray-400' }} mt-1">
+                                    @if($isStep3Done)
+                                        <span class="text-green-600 font-bold">Selamat! Proses pendaftaran merek/hak cipta selesai.</span>
+                                    @else
+                                        Menunggu penerbitan sertifikat resmi.
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            @endif
+
                 </div>
             </div>
 

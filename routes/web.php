@@ -3,75 +3,52 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PimpinanController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Smart Redirect: Admin goes to Admin Dashboard, Users go to User Dashboard
-Route::get('/dashboard', function () {
-    if (Auth::check() && Auth::user()->email === 'admin@lakid.kepri.prov.go.id') {
-        return redirect()->route('admin.dashboard');
-    }
+// Halaman Statis Footer (Publik)
+Route::view('/kebijakan-privasi', 'privacy')->name('privacy');
+Route::view('/syarat-ketentuan', 'terms')->name('terms');
 
-    $user = Auth::user();
-        // 1. Jika Login sebagai ADMIN UTAMA
-        if ($user && $user->email === 'admin@lakid.kepri.prov.go.id') {
-            return redirect()->route('admin.dashboard');
-        }
+// Dashboard Utama
+// Menggunakan Controller 'index' untuk logika Kuota & Redirect
+Route::get('/dashboard', [PengajuanController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
-        // 2. Jika Login sebagai PIMPINAN (KADIS)
-        if ($user && $user->email === 'kadis@lakid.kepri.prov.go.id') {
-            return redirect()->route('pimpinan.dashboard');
-        }
-
-        // 3. Jika User Biasa (Masyarakat)
-        // Ambil data pengajuan milik user tersebut saja
-        $pengajuans = \App\Models\Pengajuan::where('user_id', Auth::id())->latest()->get();
-
-    return view('dashboard', compact('pengajuans'));
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-// User Routes
+// Group Auth (User yang sudah login)
 Route::middleware('auth')->group(function () {
+    // 1. Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Use resource for cleaner routes, EXCEPT 'index' (digantikan dashboard)
+    // 2. Pengajuan (Resource)
+    // Ini PENTING: Otomatis membuat route pengajuan.create, store, show, dll.
     Route::resource('pengajuan', PengajuanController::class)->except(['index']);
     
-    // Submit pengajuan (change Draft to Diajukan)
-    Route::post('/pengajuan/{pengajuan}/submit', [PengajuanController::class, 'submit'])->name('pengajuan.submit');
-
-    // Route Batal/Hapus Pengajuan
-    Route::delete('/pengajuan/{pengajuan}', [App\Http\Controllers\PengajuanController::class, 'destroy'])
-    ->name('pengajuan.destroy');
-    
-    // Tambahkan Route Bantuan di sini
+    // 3. Pusat Bantuan
     Route::get('/bantuan', function () {
         return view('bantuan');
     })->name('bantuan');
 
-    // Route Khusus Dashboard Pimpinan
-    Route::get('/pimpinan-dashboard', [App\Http\Controllers\PimpinanController::class, 'index'])
-        ->middleware(['auth', 'verified'])
-        ->name('pimpinan.dashboard');
-
-    // Route Export PDF (View Cetak)
-    Route::get('/pimpinan/cetak', [App\Http\Controllers\PimpinanController::class, 'cetakPdf'])
-        ->middleware(['auth', 'verified'])
-        ->name('pimpinan.cetak');
-
-    // Route Export Excel (CSV)
-    Route::get('/pimpinan/excel', [App\Http\Controllers\PimpinanController::class, 'exportExcel'])
-        ->middleware(['auth', 'verified'])
-        ->name('pimpinan.excel');
+    // 4. Menu Pimpinan
+    Route::get('/pimpinan-dashboard', [PimpinanController::class, 'index'])->name('pimpinan.dashboard');
+    Route::get('/pimpinan/cetak', [PimpinanController::class, 'cetakPdf'])->name('pimpinan.cetak');
+    Route::get('/pimpinan/excel', [PimpinanController::class, 'exportExcel'])->name('pimpinan.excel');
 });
 
-// Admin Routes (Protected by isAdmin middleware)
+// Group Admin (Hanya Admin)
 Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/pengajuan/{id}', [AdminController::class, 'show'])->name('admin.show');

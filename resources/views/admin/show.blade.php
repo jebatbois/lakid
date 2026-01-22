@@ -33,12 +33,23 @@
                                     {{ $pengajuan->jenis == 'Merek' ? '®' : '©' }} {{ $pengajuan->jenis }}
                                 </span>
                                 <span class="text-gray-500 text-sm">Pemohon: <strong class="text-gray-700">{{ $pengajuan->user->name }}</strong> ({{ $pengajuan->user->email }})</span>
+                                
+                                {{-- Badge Kategori --}}
+                                @if($pengajuan->kategori == 'Fasilitasi')
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded border border-blue-200">
+                                        Fasilitasi
+                                    </span>
+                                @else
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-0.5 rounded border border-yellow-200">
+                                        Mandiri
+                                    </span>
+                                @endif
                             </div>
                         </div>
                         
                         {{-- Status Badge --}}
                         <div class="flex flex-col items-end">
-                            <span class="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Status</span>
+                            <span class="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Status Utama</span>
                             @php
                                 $colors = [
                                     'Draft' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -52,6 +63,15 @@
                             <span class="px-4 py-1 rounded-full text-sm font-bold border {{ $colorClass }}">
                                 {{ $pengajuan->status }}
                             </span>
+
+                            @if($pengajuan->kategori == 'Fasilitasi')
+                                <div class="mt-2 text-right">
+                                    <span class="text-[10px] text-gray-400 uppercase tracking-wide font-bold">Posisi Tahapan</span>
+                                    <div class="text-sm font-semibold text-blue-600">
+                                        {{ $pengajuan->tahapan_proses ?? 'Verifikasi Internal' }}
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -149,7 +169,7 @@
                                 <a href="{{ asset('storage/'.$pengajuan->file_surat_umk) }}" target="_blank" class="text-blue-600 text-sm font-bold hover:underline flex items-center justify-center gap-1">Lihat Surat</a>
                             </div>
 
-                            {{{-- 7. FOTO PRODUK / DOKUMENTASI (DINAMIS) --}}
+                            {{-- 7. FOTO PRODUK / DOKUMENTASI (DINAMIS) --}}
                             <div class="border rounded-lg p-4 hover:bg-gray-50 transition">
                                 <span class="block text-xs font-bold text-gray-500 uppercase mb-2">
                                     {{ $pengajuan->jenis == 'Merek' ? 'Foto Produk' : 'Dokumentasi/Cover' }}
@@ -181,33 +201,89 @@
                             @csrf
                             @method('PATCH')
                             
+                            {{-- ========================================== --}}
+                            {{-- LOGIKA KHUSUS: PENGATURAN TAHAPAN FASILITASI --}}
+                            {{-- ========================================== --}}
+                            @if($pengajuan->kategori == 'Fasilitasi')
+                                <div class="mb-6 bg-white border border-blue-200 rounded-lg p-5 shadow-sm">
+                                    <h5 class="font-bold text-blue-800 mb-2 flex items-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                        Update Tracking Fasilitasi
+                                    </h5>
+                                    <p class="text-sm text-gray-600 mb-4">
+                                        Atur progres pengajuan ini agar Pemohon dapat memantau proses secara realtime.
+                                    </p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Posisi Tahapan Saat Ini</label>
+                                            <select name="tahapan_proses" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 text-sm">
+                                                <option value="Verifikasi Internal" {{ ($pengajuan->tahapan_proses ?? 'Verifikasi Internal') == 'Verifikasi Internal' ? 'selected' : '' }}>
+                                                    1. Verifikasi Berkas Internal
+                                                </option>
+                                                <option value="Pendaftaran DJKI" {{ ($pengajuan->tahapan_proses) == 'Pendaftaran DJKI' ? 'selected' : '' }}>
+                                                    2. Sedang Proses di DJKI
+                                                </option>
+                                                <option value="Selesai" {{ ($pengajuan->tahapan_proses) == 'Selesai' ? 'selected' : '' }}>
+                                                    3. Selesai (Sertifikat Terbit)
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="flex items-end">
+                                            @if($pengajuan->status == 'Disetujui')
+                                                {{-- Jika sudah disetujui, munculkan tombol update khusus tracking --}}
+                                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow transition text-sm">
+                                                    Simpan Tahapan
+                                                </button>
+                                            @else
+                                                <div class="text-xs text-gray-500 italic p-2 bg-gray-50 rounded border border-gray-100">
+                                                    Tekan tombol "Setujui" di bawah untuk menyimpan perubahan tahapan ini bersamaan.
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- ========================================== --}}
+                            {{-- LOGIKA UTAMA: APPROVAL / REJECTION --}}
+                            {{-- ========================================== --}}
                             @if($pengajuan->status != 'Disetujui')
-                                <div class="mb-6 bg-white p-4 rounded-lg border border-blue-200 shadow-sm">
+                                <div class="mb-6 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                                     <label class="block text-sm font-bold text-gray-900 mb-2">
                                         1. Upload Surat Rekomendasi (PDF)
+                                        <span class="font-normal text-gray-500 text-xs ml-1">(Wajib jika menyetujui)</span>
                                     </label>
-                                    <input type="file" name="file_surat_rekomendasi" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 rounded cursor-pointer">
+                                    <input type="file" name="file_surat_rekomendasi" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 border border-gray-300 rounded cursor-pointer">
                                 </div>
+                                
                                 <div class="mb-6">
                                     <label class="block text-sm font-bold text-gray-700 mb-2">2. Catatan untuk Pemohon (Opsional)</label>
-                                    <textarea name="catatan_admin" rows="3" class="w-full rounded-md border-gray-300 shadow-sm text-gray-900" placeholder="Contoh: Berkas lengkap. Surat rekomendasi telah diterbitkan.">{{ $pengajuan->catatan_admin }}</textarea>
+                                    <textarea name="catatan_admin" rows="3" class="w-full rounded-md border-gray-300 shadow-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500" placeholder="Contoh: Berkas lengkap. Surat rekomendasi telah diterbitkan.">{{ $pengajuan->catatan_admin }}</textarea>
                                 </div>
-                                <div class="flex gap-4 border-t pt-4">
+                                
+                                <div class="flex gap-4 border-t border-gray-200 pt-4">
                                     <button type="submit" name="status" value="Disetujui" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow transition flex justify-center items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        Setujui
+                                        Setujui & Proses
                                     </button>
                                     <button type="submit" name="status" value="Ditolak" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow transition flex justify-center items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                        Tolak
+                                        Tolak Pengajuan
                                     </button>
                                 </div>
                             @else
-                                <div class="text-center p-6 bg-green-50 rounded-lg border border-green-200">
-                                    <h3 class="text-lg font-bold text-green-800">✅ Pengajuan Sudah Disetujui</h3>
-                                    <p class="text-green-700 mb-4">Surat rekomendasi telah diterbitkan.</p>
+                                {{-- JIKA SUDAH DISETUJUI (READ ONLY MODE UNTUK FILE) --}}
+                                <div class="mt-6 text-center p-6 bg-green-50 rounded-lg border border-green-200">
+                                    <h3 class="text-lg font-bold text-green-800 flex justify-center items-center gap-2">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        Pengajuan Sudah Disetujui
+                                    </h3>
+                                    <p class="text-green-700 mb-4 mt-2">Surat rekomendasi telah diterbitkan dan dikirim ke pemohon.</p>
+                                    
                                     @if($pengajuan->file_surat_rekomendasi)
-                                        <a href="{{ asset('storage/'.$pengajuan->file_surat_rekomendasi) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-white border border-green-300 rounded-md font-semibold text-green-700 hover:bg-green-50 shadow-sm transition">
+                                        <a href="{{ asset('storage/'.$pengajuan->file_surat_rekomendasi) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-white border border-green-300 rounded-md font-semibold text-green-700 hover:bg-green-100 shadow-sm transition">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                             Cek Surat Rekomendasi
                                         </a>
                                     @endif

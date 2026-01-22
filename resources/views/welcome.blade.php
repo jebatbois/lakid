@@ -57,51 +57,45 @@
         </div>
     </nav>
 
-{{-- HERO SECTION (Photo Background Kepri) --}}
+    {{-- HERO SECTION (Photo Background Kepri) --}}
     <section class="relative pt-24 pb-32 lg:pt-40 lg:pb-56 overflow-hidden">
         
-        {{-- 1. BACKGROUND IMAGE (Foto Kepri) --}}
+        {{-- 1. BACKGROUND IMAGE --}}
         <div class="absolute inset-0 -z-20">
-            {{-- 
-               CATATAN: Saya menggunakan foto placeholder pemandangan pulau tropis dari Unsplash.
-               Nanti, silakan ganti 'src' ini dengan foto asli Kepri (misal: Jembatan Barelang, Pulau Bintan, dll)
-               Simpan foto di public/img/hero-kepri.jpg lalu gunakan: src="{{ asset('img/hero-kepri.jpg') }}"
-            --}}
             <img src="{{ asset('img/hero.jpg') }}" 
                  alt="Keindahan Kepulauan Riau" 
                  class="w-full h-full object-cover scale-105 animate-slow-zoom">
         </div>
 
-        {{-- 2. OVERLAY GRADIENT (Agar teks terbaca) --}}
-        {{-- Gradasi dari Biru Tua di atas, ke transparan di bawah agar menyatu dengan section berikutnya --}}
+        {{-- 2. OVERLAY GRADIENT --}}
         <div class="absolute inset-0 bg-gradient-to-b from-blue-950/90 via-blue-900/60 to-gray-50 -z-10"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             
-            {{-- Badge (Update warna agar kontras di background gelap) --}}
+            {{-- Badge --}}
             <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-900/50 text-blue-100 text-sm font-bold mb-8 border border-blue-400/30 backdrop-blur-md shadow-sm">
                 <span class="flex h-2 w-2 rounded-full bg-blue-400 mr-2 animate-pulse"></span>
-                Fasilitasi HKI Resmi Pemerintah
+                Layanan HKI Resmi Pemerintah
             </div>
 
-            {{-- Headline (Ubah jadi Putih) --}}
+            {{-- Headline --}}
             <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 leading-tight drop-shadow-lg">
                 Lindungi Karya, <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-200">Raih Masa Depan.</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-200">Tingkatkan Nilai Ekonomi.</span>
             </h1>
 
-            {{-- Subheadline (Ubah jadi Terang) --}}
+            {{-- Subheadline (Copywriting Baru) --}}
             <p class="mt-4 max-w-2xl mx-auto text-xl text-blue-100 mb-10 leading-relaxed font-medium drop-shadow">
-                Platform digital Dinas Pariwisata Kepulauan Riau untuk mendapatkan <strong>Surat Rekomendasi HKI</strong>. Permudah pendaftaran Merek & Hak Cipta Anda ke Kemenkumham.
+                Platform resmi Dinas Pariwisata Provinsi Kepulauan Riau. Akses program <strong>Fasilitasi Pendaftaran HKI (Gratis)</strong> atau ajukan <strong>Surat Rekomendasi</strong> untuk keringanan biaya secara mandiri.
             </p>
 
             {{-- CTA Buttons --}}
             <div class="flex flex-col sm:flex-row justify-center gap-4">
-                {{-- Tombol Utama (Lebih Terang) --}}
+                {{-- Tombol Utama --}}
                 <a href="{{ route('register') }}" class="px-8 py-4 text-lg font-bold rounded-full text-blue-900 bg-white hover:bg-blue-50 shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1">
-                    Ajukan Rekomendasi 🚀
+                    Mulai Pengajuan 🚀
                 </a>
-                {{-- Tombol Kedua (Glass Effect) --}}
+                {{-- Tombol Kedua --}}
                 <a href="#layanan" class="px-8 py-4 text-lg font-bold rounded-full text-white bg-white/10 border border-white/30 hover:bg-white/20 backdrop-blur-md shadow-sm transition">
                     Pelajari Syarat
                 </a>
@@ -115,7 +109,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Pusat Informasi & Layanan</h2>
-                <p class="text-lg text-gray-500 max-w-2xl mx-auto">Bingung cara mendaftar? Klik menu di bawah untuk melihat syarat lengkap atau unduh dokumen panduan.</p>
+                <p class="text-lg text-gray-500 max-w-2xl mx-auto">Kami menyediakan panduan lengkap dan template dokumen untuk mempermudah proses pendaftaran HKI Anda.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -127,25 +121,25 @@
                             <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-2xl">®</div>
                             <h3 class="text-xl font-bold text-gray-900">Layanan Merek</h3>
                         </div>
-                        <p class="text-gray-500 text-sm mb-6">Informasi bagi pelaku usaha yang ingin mendaftarkan brand/logo produk.</p>
+                        <p class="text-gray-500 text-sm mb-6">Panduan untuk melindungi identitas usaha seperti Nama Brand, Logo, dan Simbol Dagang.</p>
                         
                         <ul class="space-y-3 mt-auto">
                             <li>
                                 <button @click="showModalMerek = true" class="flex items-center text-gray-600 hover:text-blue-600 transition group text-sm w-full text-left outline-none focus:outline-none font-medium p-2 hover:bg-blue-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center mr-3 text-xs">📄</span>
-                                    Syarat Pendaftaran
+                                    Alur & Syarat Pendaftaran
                                 </button>
                             </li>
                             <li>
                                 <a href="https://pdki-indonesia.dgip.go.id" target="_blank" class="flex items-center text-gray-600 hover:text-blue-600 transition group text-sm font-medium p-2 hover:bg-blue-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center mr-3 text-xs">🔍</span>
-                                    Cek Pangkalan Data KI
+                                    Cek Ketersediaan Merek
                                 </a>
                             </li>
                             <li>
                                 <a href="https://skm.dgip.go.id/" target="_blank" class="flex items-center text-gray-600 hover:text-blue-600 transition group text-sm font-medium p-2 hover:bg-blue-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center mr-3 text-xs">🏷️</span>
-                                    Cek Kelas Merek (1-45)
+                                    Cek Kelas Merek (Klasifikasi)
                                 </a>
                             </li>
                         </ul>
@@ -159,13 +153,13 @@
                             <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center font-bold text-2xl">©</div>
                             <h3 class="text-xl font-bold text-gray-900">Layanan Hak Cipta</h3>
                         </div>
-                        <p class="text-gray-500 text-sm mb-6">Untuk karya seni, musik, buku, film, dan karya kreatif lainnya.</p>
+                        <p class="text-gray-500 text-sm mb-6">Perlindungan untuk karya seni, sastra, musik, film, foto, dan program komputer.</p>
                         
                         <ul class="space-y-3 mt-auto">
                             <li>
                                 <button @click="showModalInfoCipta = true" class="flex items-center text-gray-600 hover:text-yellow-600 transition group text-sm w-full text-left outline-none focus:outline-none font-medium p-2 hover:bg-yellow-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-yellow-100 flex items-center justify-center mr-3 text-xs">ℹ️</span>
-                                    Informasi & Modul Hak Cipta
+                                    Apa itu Hak Cipta?
                                 </button>
                             </li>
                             <li>
@@ -177,7 +171,7 @@
                             <li>
                                 <button @click="showModalFile = true" class="flex items-center text-gray-600 hover:text-yellow-600 transition group text-sm w-full text-left outline-none focus:outline-none font-medium p-2 hover:bg-yellow-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-yellow-100 flex items-center justify-center mr-3 text-xs">📂</span>
-                                    Jenis File Karya
+                                    Format File Karya
                                 </button>
                             </li>
                         </ul>
@@ -191,21 +185,24 @@
                             <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold text-2xl">⬇️</div>
                             <h3 class="text-xl font-bold text-gray-900">Dokumen & Bantuan</h3>
                         </div>
-                        <p class="text-gray-500 text-sm mb-6">Unduh template surat dan hubungi kami jika ada kendala.</p>
+                        <p class="text-gray-500 text-sm mb-6">Unduh template surat wajib dan hubungi kami jika mengalami kendala.</p>
                         
                         <ul class="space-y-3 mb-6">
+                            {{-- Link UMK --}}
                             <li>
                                 <a href="https://docs.google.com/document/d/1kexSPXukQdSxaWx_6bVUvyxw8c9h3srR/edit" target="_blank" class="flex items-center text-gray-600 hover:text-green-600 transition group text-sm font-medium p-2 hover:bg-green-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-green-100 flex items-center justify-center mr-3 text-xs">📥</span>
                                     Template Surat UMK
                                 </a>
                             </li>
+                            {{-- Link Hak Cipta --}}
                             <li>
                                 <a href="https://docs.google.com/document/d/1KW8QYdNyRw1t1EhZ5XBwRT_GfyO6BTOf/edit" target="_blank" class="flex items-center text-gray-600 hover:text-green-600 transition group text-sm font-medium p-2 hover:bg-green-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-green-100 flex items-center justify-center mr-3 text-xs">📥</span>
                                     Template Surat Hak Cipta
                                 </a>
                             </li>
+                            {{-- Link Rekomendasi --}}
                             <li>
                                 <a href="https://docs.google.com/document/d/1IsENGH7Fwhz6c9IF72Wckozs3E_osLeKMgZSgvJE1jA/edit" target="_blank" class="flex items-center text-gray-600 hover:text-green-600 transition group text-sm font-medium p-2 hover:bg-green-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-green-100 flex items-center justify-center mr-3 text-xs">📥</span>
@@ -267,7 +264,87 @@
                     </div>
                     <h4 class="font-bold text-gray-900 mt-4 border-b pb-2">Masa Berlaku Pelindungan</h4>
                     <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1"><li><strong>Seumur Hidup + 70 Tahun:</strong> Buku, Lagu, Lukisan, Tari, Drama.</li><li><strong>50 Tahun sejak Publikasi:</strong> Fotografi, Program Komputer, Sinematografi.</li></ul>
+                    <h4 class="font-bold text-gray-900 mt-4 border-b pb-1">Biaya PNBP (Online)</h4><ul class="list-disc pl-5 text-sm text-gray-700 space-y-1"><li><strong>UMK / Litbang:</strong> Rp 200.000 / permohonan.</li><li><strong>Umum:</strong> Rp 400.000 / permohonan.</li></ul>
                 </div>
                 <div class="bg-gray-50 px-6 py-4 sm:flex sm:flex-row-reverse gap-2">
                     <button @click="showModalInfoCipta = false" class="inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-bold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 sm:mt-0 sm:w-auto">Tutup</button>
-                    <a href="https://drive.google.com/file/d/1aBcDeFgHiJkLmNoPqRsTuVwXyZ/view" target="_blank" class="inline-flex w-full justify-center rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-yellow-600 sm:mt-0 sm:w-auto">Unduh Modul Hak Cipta</a>
+                    <a href="https://drive.google.com/file/d/13tB17EpZVLirdLm9aZJ-WHQeSfliyiiO/view" target="_blank" class="inline-flex w-full justify-center rounded-lg bg-yellow-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-yellow-700 sm:mt-0 sm:w-auto flex items-center gap-2">Download Modul (PDF)</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 2. MODAL MEREK --}}
+    <div x-show="showModalMerek" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-sm" @click="showModalMerek = false"></div>
+        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border-t-8 border-blue-600">
+                <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-b">
+                    <h3 class="text-xl font-extrabold leading-6 text-gray-900">Alur & Syarat Pendaftaran Merek</h3>
+                    <button @click="showModalMerek = false" class="text-gray-400 hover:text-red-500 focus:outline-none"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                </div>
+                <div class="px-6 py-6 space-y-6">
+                    <div class="flex gap-4"><div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">1</div></div><div><h4 class="text-lg font-bold text-gray-900">Cek Merek & Klasifikasi</h4><p class="text-sm text-gray-600 mt-1">Pastikan merek belum terdaftar. Tentukan kelas (Jasa/Barang).</p></div></div>
+                    <div class="flex gap-4"><div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">2</div></div><div><h4 class="text-lg font-bold text-gray-900">Etiket Merek (Logo)</h4><p class="text-sm text-gray-600 mt-1">File logo format <strong>JPG</strong> (rekomendasi: 9x9 cm).</p></div></div>
+                    <div class="flex gap-4"><div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">3</div></div><div><h4 class="text-lg font-bold text-gray-900">Data Pemilik</h4><p class="text-sm text-gray-600 mt-1">Scan KTP dan NPWP (JPG/PDF).</p></div></div>
+                    <div class="flex gap-4"><div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">4</div></div><div><h4 class="text-lg font-bold text-gray-900">Tanda Tangan Digital</h4><p class="text-sm text-gray-600 mt-1">Foto tanda tangan di kertas putih (JPG).</p></div></div>
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-bold">5</div></div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900">Surat Pernyataan UMK</h4>
+                            <p class="text-sm text-gray-600 mt-1">Isi, TTD Materai, Scan (JPG/PDF).</p>
+                            <a href="https://docs.google.com/document/d/1kexSPXukQdSxaWx_6bVUvyxw8c9h3srR/edit" target="_blank" class="text-sm text-blue-600 font-bold hover:underline mt-1 block">Download Template UMK &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-6 py-4 sm:flex sm:flex-row-reverse"><button @click="showModalMerek = false" class="inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-bold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 sm:mt-0 sm:w-auto">Tutup</button></div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 3. MODAL SYARAT CIPTA --}}
+    <div x-show="showModalCipta" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-sm" @click="showModalCipta = false"></div>
+        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border-t-8 border-yellow-500">
+                <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-b">
+                    <h3 class="text-xl font-extrabold leading-6 text-gray-900">Alur & Syarat Hak Cipta</h3>
+                    <button @click="showModalCipta = false" class="text-gray-400 hover:text-red-500 focus:outline-none"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                </div>
+                <div class="px-6 py-6 space-y-6">
+                    <p class="text-center text-yellow-800 font-semibold bg-yellow-100 p-3 rounded-lg border border-yellow-200">"Jangan lupa publikasi karya, biar otomatis dapat hak cipta!"</p>
+                    <div class="flex gap-4"><div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 font-bold">1</div></div><div><h4 class="text-lg font-bold text-gray-900">Identitas Pencipta</h4><p class="text-sm text-gray-600 mt-1">Scan/Foto KTP & NPWP (JPG/PDF).</p></div></div>
+                    <div class="flex gap-4"><div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 font-bold">2</div></div><div><h4 class="text-lg font-bold text-gray-900">Identitas Pemegang Hak</h4><p class="text-sm text-gray-600 mt-1">Scan KTP & NPWP.</p></div></div>
+                    <div class="flex gap-4"><div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 font-bold">3</div></div><div><h4 class="text-lg font-bold text-gray-900">File Contoh Ciptaan</h4><p class="text-sm text-gray-600 mt-1">Format sesuai jenis karya.</p></div></div>
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 font-bold">4</div></div>
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-900">Surat Pernyataan Keaslian</h4>
+                            <p class="text-sm text-gray-600 mt-1">Download, Isi, TTD Materai, Scan.</p>
+                            <a href="https://docs.google.com/document/d/1KW8QYdNyRw1t1EhZ5XBwRT_GfyO6BTOf/edit" target="_blank" class="text-sm text-yellow-600 font-bold hover:underline mt-1 block">Download Template Pernyataan &rarr;</a>
+                        </div>
+                    </div>
+                    <div class="flex gap-4"><div class="flex-shrink-0"><div class="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 font-bold">5</div></div><div><h4 class="text-lg font-bold text-gray-900">Isi Formulir Digital</h4><p class="text-sm text-gray-600 mt-1">Siapkan data: Judul, Deskripsi, Tgl Publikasi.</p></div></div>
+                </div>
+                <div class="bg-gray-50 px-6 py-4 sm:flex sm:flex-row-reverse"><button @click="showModalCipta = false" class="inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-bold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-100 sm:mt-0 sm:w-auto">Tutup</button></div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 4. MODAL JENIS FILE --}}
+    <div x-show="showModalFile" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-sm" @click="showModalFile = false"></div>
+        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-4xl border-t-8 border-purple-500">
+                <div class="bg-gray-50 px-6 py-4 flex justify-between items-center border-b">
+                    <h3 class="text-xl font-extrabold leading-6 text-gray-900">Jenis & Format File Karya Cipta</h3>
+                    <button @click="showModalFile = false" class="text-gray-400 hover:text-red-500 focus:outline-none"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                </div>
+                <div class="px-6 py-6"><div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200 border"><thead class="bg-gray-100"><tr><th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Jenis Ciptaan</th><th class="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">File Contoh Ciptaan</th><th class="px-4 py-2 text-center text-xs font-bold text-gray-700 uppercase">Format</th></tr></thead><tbody class="bg-white divide-y divide-gray-200 text-sm"><tr><td class="px-4 py-2 font-medium">Buku</td><td class="px-4 py-2">Cover, Daftar Isi, Daftar Pustaka</td><td class="px-4 py-2 text-center bg-gray-50">PDF</td></tr><tr><td class="px-4 py-2 font-medium">Program Komputer</td><td class="px-4 py-2">Cover, Program, Manual Book</td><td class="px-4 py-2 text-center bg-gray-50">PDF</td></tr><tr><td class="px-4 py-2 font-medium">Ceramah, Pidato, Kuliah</td><td class="px-4 py-2">Rekaman, Video</td><td class="px-4 py-2 text-center bg-gray-50">MP4 / PDF</td></tr><tr><td class="px-4 py-2 font-medium">Alat Peraga (Edukasi)</td><td class="px-4 py-2">Foto dan Buku Panduan</td><td class="px-4 py-2 text-center bg-gray-50">PDF</td></tr><tr><td class="px-4 py-2 font-medium">Lagu / Musik</td><td class="px-4 py-2">Rekaman / Partitur (Notasi)</td><td class="px-4 py-2 text-center bg-gray-50">MP3 / PDF</td></tr><tr><td class="px-4 py-2 font-medium">Drama, Tari, Pewayangan</td><td class="px-4 py-2">Video / Rekaman</td><td class="px-4 py-2 text-center bg-gray-50">MP4</td></tr><tr><td class="px-4 py-2 font-medium">Seni Rupa (Lukis, Ukir, Batik, Patung)</td><td class="px-4 py-2">Foto / Gambar</td><td class="px-4 py-2 text-center bg-gray-50">JPG</td></tr><tr><td class="px-4 py-2 font-medium">Arsitektur, Peta</td><td class="px-4 py-2">Foto / Gambar</td><td class="px-4 py-2 text-center bg-gray-50">JPG / PDF</td></tr><tr><td class="px-4 py-2 font-medium">Fotografi</td><td class="px-4 py-2">Foto / Gambar</td><td class="px-4 py-2 text-center bg-gray-50">JPG</td></tr><tr><td class="px-4 py-2 font-medium">Sinematografi</td><td class="px-4 py-2">Video, Naskah (Sinopsis)</td><td class="px-4 py-2 text-center bg-gray-50">MP4</td></tr><tr><td class="px-4 py-2 font-medium">Terjemahan / Tafsir</td><td class="px-4 py-2">Dokumen</td><td class="px-4 py-2 text-center bg-gray-50">PDF</td></tr></tbody></table><p class="mt-4 text-xs text-gray-500">*Ukuran maksimal file contoh ciptaan adalah 20 MB.</p></div></div>
+                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"><button @click="showModalFile = false" class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Tutup</button></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

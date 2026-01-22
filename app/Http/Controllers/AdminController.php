@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -48,26 +49,50 @@ class AdminController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
+        // Validasi input
         $request->validate([
-            'status' => 'required|in:Ditinjau,Disetujui,Ditolak',
+            // Status jadi nullable karena tombol "Simpan Tahapan" tidak kirim status
+            'status' => 'nullable|in:Ditinjau,Disetujui,Ditolak', 
             'catatan_admin' => 'nullable|string|max:1000',
             'file_surat_rekomendasi' => 'nullable|file|mimes:pdf|max:2048',
+            'tahapan_proses' => 'nullable|string', // Tambahan validasi tahapan
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);
-        $data = [
-            'status' => $request->status,
-            'catatan_admin' => $request->catatan_admin
-        ];
+        
+        // Siapkan array data yang akan diupdate
+        $data = [];
 
-        // Jika Admin upload surat rekomendasi
+        // 1. Update Status (Jika ada input status)
+        if ($request->has('status') && $request->status != null) {
+            $data['status'] = $request->status;
+        }
+
+        // 2. Update Catatan Admin
+        if ($request->has('catatan_admin')) {
+            $data['catatan_admin'] = $request->catatan_admin;
+        }
+
+        // 3. Update Tahapan Proses (Khusus Fasilitasi)
+        // Kita update jika input ada DAN kategorinya memang Fasilitasi
+        if ($request->has('tahapan_proses') && $pengajuan->kategori == 'Fasilitasi') {
+            $data['tahapan_proses'] = $request->tahapan_proses;
+        }
+
+        // 4. Handle Upload Surat Rekomendasi
         if ($request->hasFile('file_surat_rekomendasi')) {
+            // Hapus file lama jika ada (opsional, biar storage ga penuh)
+            if ($pengajuan->file_surat_rekomendasi) {
+                Storage::disk('public')->delete($pengajuan->file_surat_rekomendasi);
+            }
+            
             $path = $request->file('file_surat_rekomendasi')->store('surat_rekomendasi', 'public');
             $data['file_surat_rekomendasi'] = $path;
         }
 
+        // Eksekusi update
         $pengajuan->update($data);
 
-        return back()->with('success', 'Status dan dokumen berhasil diperbarui.');
+        return back()->with('success', 'Data pengajuan berhasil diperbarui.');
     }
 }
