@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
+use App\Models\Archive; // Tambahkan Model Archive
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -33,126 +34,94 @@ class PengajuanController extends Controller
 
         $kuotaMaksimal = 50;
         $sisaKuota = max(0, $kuotaMaksimal - $jumlahFasilitasi);
-        
-        // PENTING: Variabel ini yang dicari oleh Dashboard
         $kuotaPenuh = $jumlahFasilitasi >= $kuotaMaksimal;
 
         // 3. Ambil data riwayat pengajuan user ini
         $pengajuans = Pengajuan::where('user_id', $user->id)->latest()->get();
-        
-        // 4. Lempar variabel ke view dashboard
-        return view('dashboard', compact('pengajuans', 'sisaKuota', 'kuotaPenuh'));
+
+        // 4. STATISTIK GLOBAL (GABUNGAN ARSIP & SISTEM)
+        // Menghitung total data dari Arsip + Data Pengajuan Aktif (Bukan Draft)
+        $totalArsip = Archive::count();
+        $totalSistem = Pengajuan::where('status', '!=', 'Draft')->count();
+        $totalFasilitasiGlobal = $totalArsip + $totalSistem;
+
+        return view('dashboard', compact('pengajuans', 'kuotaPenuh', 'sisaKuota', 'totalFasilitasiGlobal'));
     }
 
     /**
-     * Show the form for creating a new pengajuan.
+     * Menampilkan Form Pengajuan (Create).
      */
-   public function create(Request $request): View
+    public function create(Request $request): View
     {
-        // PERBAIKAN: Ubah 'tipe' menjadi 'kategori' sesuai link di dashboard
-        $kategori = $request->query('kategori', 'Mandiri'); 
-
-        // Cek Kuota Fasilitasi
-        if ($kategori == 'Fasilitasi') {
-            $terpakai = Pengajuan::where('kategori', 'Fasilitasi')
-                        ->where('tahun', date('Y'))
-                        ->count();
-            
-            if ($terpakai >= 50) {
-                return redirect()->route('dashboard')->with('error', 'Mohon maaf, Kuota Fasilitasi tahun ini sudah penuh.');
-            }
-        }
-
+        $kategori = $request->query('kategori', 'Mandiri'); // Default Mandiri jika tidak ada parameter
         return view('pengajuan.create', compact('kategori'));
     }
 
     /**
-     * Store a newly created pengajuan in storage.
+     * Menyimpan Pengajuan Baru (Store).
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        // 1. Validasi Input
-        $rules = [
-            'jenis' => 'required',
-            'deskripsi_karya' => 'required',
-            'kategori' => 'required', // Penting untuk membedakan jalur
-            // Dokumen Wajib Umum
-            'file_ktp'              => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_npwp'             => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_surat_permohonan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_cv'               => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'file_surat_umk'        => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_foto_produk'      => 'required|file|mimes:jpg,jpeg,png|max:5120',
-        ];
+        // Validasi Input
+        $request->validate([
+            'kategori' => 'required|in:Mandiri,Fasilitasi',
+            'jenis' => 'required|in:Merek,Hak Cipta',
+            'nama_merek' => 'required|string|max:255',
+            'deskripsi_karya' => 'required|string',
+            // Validasi File (Maks 2MB, PDF/JPG/PNG)
+            'file_ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'file_npwp' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048', // Opsional
+            'file_surat_permohonan' => 'required|file|mimes:pdf|max:2048',
+            'file_logo' => 'nullable|file|mimes:jpg,jpeg,png|max:2048', // Khusus Merek
+            'file_karya' => 'nullable|file|mimes:pdf,mp3,mp4,jpg,jpeg,png|max:5120', // Khusus Hak Cipta (Max 5MB)
+            'file_cv' => 'nullable|file|mimes:pdf|max:2048',
+            'file_surat_umk' => 'nullable|file|mimes:pdf|max:2048',
+            'file_foto_produk' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-        // Validasi Khusus berdasarkan jenis layanan
-        if ($request->jenis == 'Merek') {
-            $rules['nama_merek'] = 'required';
-            $rules['file_logo'] = 'required|file|mimes:jpg,jpeg,png|max:2048';
-        } elseif ($request->jenis == 'Hak Cipta') {
-            $rules['judul_ciptaan'] = 'required';
-            $rules['file_karya'] = 'required|file|mimes:mp3,pdf,mp4,doc,docx|max:20480';
-        }
+        // Upload File ke Storage
+        $fileKtp = $request->file('file_ktp')->store('dokumen/ktp', 'public');
+        $fileNpwp = $request->hasFile('file_npwp') ? $request->file('file_npwp')->store('dokumen/npwp', 'public') : null;
+        $fileSuratPermohonan = $request->file('file_surat_permohonan')->store('dokumen/surat_permohonan', 'public');
+        $fileLogo = $request->hasFile('file_logo') ? $request->file('file_logo')->store('dokumen/logo', 'public') : null;
+        $fileKarya = $request->hasFile('file_karya') ? $request->file('file_karya')->store('dokumen/karya', 'public') : null;
+        $fileCv = $request->hasFile('file_cv') ? $request->file('file_cv')->store('dokumen/cv', 'public') : null;
+        $fileSuratUmk = $request->hasFile('file_surat_umk') ? $request->file('file_surat_umk')->store('dokumen/surat_umk', 'public') : null;
+        $fileFotoProduk = $request->hasFile('file_foto_produk') ? $request->file('file_foto_produk')->store('dokumen/foto_produk', 'public') : null;
 
-        $request->validate($rules);
-
-        // --- CEK KUOTA LAGI (Backend Validation) ---
-        if ($request->kategori == 'Fasilitasi') {
-            $jumlahFasilitasi = Pengajuan::where('kategori', 'Fasilitasi')
-                                ->where('tahun', date('Y'))
-                                ->count();
-            if ($jumlahFasilitasi >= 50) {
-                return back()->with('error', 'Mohon maaf, kuota Fasilitasi tahun ini sudah penuh.');
-            }
-        }
-
-        // 2. Siapkan Data Dasar
-        $data = [
+        // Simpan ke Database
+        Pengajuan::create([
             'user_id' => Auth::id(),
+            'kategori' => $request->kategori,
             'jenis' => $request->jenis,
+            'nama_merek' => $request->nama_merek,
             'deskripsi_karya' => $request->deskripsi_karya,
-            'status' => 'Diajukan',
-            'kategori' => $request->kategori, // SIMPAN KATEGORI YANG BENAR
             'tahun' => date('Y'),
-            'tahapan_proses' => ($request->kategori == 'Fasilitasi') ? 'Verifikasi Berkas' : null,
-        ];
+            'status' => 'Draft', // Status awal
+            'tahapan_proses' => 'Verifikasi Internal', // Default step
+            
+            // Path File
+            'file_ktp' => $fileKtp,
+            'file_npwp' => $fileNpwp,
+            'file_surat_permohonan' => $fileSuratPermohonan,
+            'file_logo' => $fileLogo,
+            'file_karya' => $fileKarya,
+            'file_cv' => $fileCv,
+            'file_surat_umk' => $fileSuratUmk,
+            'file_foto_produk' => $fileFotoProduk,
+        ]);
 
-        // 3. Proses Upload File (Helper Upload)
-        if ($request->hasFile('file_ktp')) $data['file_ktp'] = $request->file('file_ktp')->store('dokumen_ktp', 'public');
-        if ($request->hasFile('file_npwp')) $data['file_npwp'] = $request->file('file_npwp')->store('dokumen_npwp', 'public');
-        if ($request->hasFile('file_surat_permohonan')) $data['file_surat_permohonan'] = $request->file('file_surat_permohonan')->store('dokumen_permohonan', 'public');
-        if ($request->hasFile('file_cv')) $data['file_cv'] = $request->file('file_cv')->store('dokumen_cv', 'public');
-        if ($request->hasFile('file_surat_umk')) $data['file_surat_umk'] = $request->file('file_surat_umk')->store('dokumen_umk', 'public');
-        if ($request->hasFile('file_foto_produk')) $data['file_foto_produk'] = $request->file('file_foto_produk')->store('dokumen_produk', 'public');
-
-        // 4. Upload Khusus
-        if ($request->jenis == 'Merek') {
-            $data['nama_merek'] = $request->nama_merek;
-            if ($request->hasFile('file_logo')) {
-                $data['file_logo'] = $request->file('file_logo')->store('dokumen_logo', 'public');
-            }
-        } elseif ($request->jenis == 'Hak Cipta') {
-            $data['nama_merek'] = $request->judul_ciptaan; // Simpan judul sebagai nama pengajuan
-            $data['judul_ciptaan'] = $request->judul_ciptaan;
-            if ($request->hasFile('file_karya')) {
-                $data['file_karya'] = $request->file('file_karya')->store('dokumen_karya', 'public');
-            }
-        }
-
-        // 6. Simpan ke Database
-        Pengajuan::create($data);
-
-        return redirect()->route('dashboard')->with('success', 'Pengajuan berhasil dikirim! Silakan tunggu verifikasi admin.');
+        return redirect()->route('dashboard')->with('success', 'Pengajuan berhasil dibuat! Status saat ini: Draft.');
     }
 
     /**
-     * Menampilkan detail pengajuan.
+     * Menampilkan Detail Pengajuan.
      */
     public function show(Pengajuan $pengajuan)
     {
         $user = Auth::user();
         
-        // Logika Akses: Pemilik OR Admin OR Pimpinan
+        // Otorisasi: Hanya pemilik, Admin, atau Kadis yang boleh lihat
         $isOwner = $pengajuan->user_id === $user->id;
         $isAdmin = $user->email === 'admin@lakid.kepri.prov.go.id';
         $isKadis = $user->email === 'kadis@lakid.kepri.prov.go.id';
@@ -192,7 +161,6 @@ class PengajuanController extends Controller
             }
         }
 
-        // Hapus data
         $pengajuan->delete();
 
         return redirect()->route('dashboard')->with('success', 'Pengajuan berhasil dibatalkan dan dihapus.');

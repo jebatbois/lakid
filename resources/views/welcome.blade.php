@@ -57,7 +57,7 @@
         </div>
     </nav>
 
-    {{-- HERO SECTION (Photo Background Kepri) --}}
+     {{-- HERO SECTION (Photo Background Kepri) --}}
     <section class="relative pt-24 pb-32 lg:pt-40 lg:pb-56 overflow-hidden">
         
         {{-- 1. BACKGROUND IMAGE --}}
@@ -104,8 +104,60 @@
         </div>
     </section>
 
-    {{-- SECTION LAYANAN & BANTUAN --}}
-    <section id="layanan" class="py-24 bg-gray-50 relative border-t border-gray-100">
+    {{-- STATISTIK SECTION (FLAT & CLEAN) --}}
+    {{-- Added mt-12 to add distinct separation --}}
+    <section id="statistik" class="bg-white py-20 border-b border-gray-100 relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900">Dampak Nyata Program</h2>
+                <p class="text-lg text-gray-500 mt-3 max-w-2xl mx-auto">Membangun ekosistem ekonomi kreatif yang terlindungi dan berdaya saing di Kepulauan Riau.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                
+                {{-- Stat 1: Total --}}
+                <div class="group p-6 rounded-2xl hover:bg-blue-50 transition duration-300">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 text-blue-600 mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <div class="text-5xl md:text-6xl font-black text-gray-900 mb-2 tracking-tight">
+                        {{ $totalFasilitasi ?? '0' }}<span class="text-blue-600 text-4xl align-top">+</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Total Terfasilitasi</h3>
+                    <p class="text-sm text-gray-500 font-medium mt-1">Pelaku Ekraf Sejak 2024</p>
+                </div>
+
+                {{-- Stat 2: Merek --}}
+                <div class="group p-6 rounded-2xl hover:bg-orange-50 transition duration-300">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-orange-100 text-orange-600 mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                    </div>
+                    <div class="text-5xl md:text-6xl font-black text-gray-900 mb-2 tracking-tight">
+                        {{ $totalMerek ?? '0' }}
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Merek Dagang</h3>
+                    <p class="text-sm text-gray-500 font-medium mt-1">UMKM Terlindungi</p>
+                </div>
+
+                {{-- Stat 3: Hak Cipta --}}
+                <div class="group p-6 rounded-2xl hover:bg-purple-50 transition duration-300">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-purple-100 text-purple-600 mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div class="text-5xl md:text-6xl font-black text-gray-900 mb-2 tracking-tight">
+                        {{ $totalHakCipta ?? '0' }}
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Hak Cipta</h3>
+                    <p class="text-sm text-gray-500 font-medium mt-1">Karya Tercatat Resmi</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    {{-- SECTION LAYANAN & BANTUAN (GREY BACKGROUND) --}}
+    <section id="layanan" class="py-24 bg-gray-50 relative border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">Pusat Informasi & Layanan</h2>

@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PimpinanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\WelcomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +14,7 @@ use App\Http\Controllers\ArchiveController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 // Halaman Statis Footer (Publik)
 Route::view('/kebijakan-privasi', 'privacy')->name('privacy');
