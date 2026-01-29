@@ -1,132 +1,202 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-2xl text-gray-900 dark:text-gray-900 leading-tight">
+            <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
                 {{ __('Dashboard Admin Dinas') }}
             </h2>
-            <div class="text-sm text-gray-600 dark:text-gray-400">
-                Total Pengajuan: <span class="font-bold text-lg">{{ $pengajuans->total() }}</span>
+            <div class="text-sm text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100">
+                Total Masuk: <span class="font-bold text-blue-600 text-lg">{{ $pengajuans->total() }}</span>
             </div>
         </div>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            
+            {{-- BAGIAN 1: GRAFIK STATISTIK (PINDAHAN DARI PIMPINAN) --}}
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-200 mb-8 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                            Statistik Pendaftaran HKI
+                        </h3>
+                        <p class="text-sm text-gray-500">Gabungan Data Arsip Manual & Sistem Online</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Update Realtime</span>
+                    </div>
+                </div>
+                
+                {{-- Container Grafik --}}
+                <div class="relative h-72 w-full">
+                    <canvas id="adminChart"></canvas>
+                </div>
+            </div>
+
             @if (session('success'))
-                <div class="mb-4 p-4 bg-green-100 dark:bg-green-900/20 border border-green-400 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg">
+                <div class="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-800 rounded-r-lg shadow-sm">
                     {{ session('success') }}
                 </div>
             @endif
 
-            @if (session('error'))
-                <div class="mb-4 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            {{-- TOOLBAR PENCARIAN & FILTER --}}
-            <div class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <form action="{{ route('admin.dashboard') }}" method="GET" class="flex flex-col md:flex-row gap-4">
-                    <div class="flex-1 relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pemohon atau merek..." class="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-10">
-                    </div>
-
-                    <div class="w-full md:w-48">
-                        <select name="status" onchange="this.form.submit()" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm h-10">
+            {{-- BAGIAN 2: TABEL MANAJEMEN PENGAJUAN --}}
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-200">
+                
+                <div class="p-6 border-b border-gray-100 bg-gray-50 flex flex-col md:flex-row justify-between gap-4 items-center">
+                    <h3 class="font-bold text-gray-800 text-lg">Daftar Pengajuan Masuk</h3>
+                    
+                    {{-- Form Pencarian --}}
+                    <form method="GET" action="{{ route('admin.dashboard') }}" class="flex w-full md:w-auto gap-2">
+                        <select name="status" class="rounded-lg border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Semua Status</option>
-                            <option value="Draft" {{ request('status') == 'Draft' ? 'selected' : '' }}>Draft (Kuning)</option>
-                            <option value="Diajukan" {{ request('status') == 'Diajukan' ? 'selected' : '' }}>Diajukan (Biru)</option>
-                            <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>Disetujui (Hijau)</option>
-                            <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak (Merah)</option>
+                            <option value="Diajukan" {{ request('status') == 'Diajukan' ? 'selected' : '' }}>Diajukan</option>
+                            <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
+                            <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                         </select>
-                    </div>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari pemohon/merek..." class="rounded-lg border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 w-full md:w-64">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition">
+                            Filter
+                        </button>
+                    </form>
+                </div>
 
-                    <div class="flex items-center gap-2">
-                        <button type="submit" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition">Filter</button>
-                        @if(request('search') || request('status'))
-                            <a href="{{ route('admin.dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-2 px-4 rounded transition flex items-center h-10 border border-gray-300">Reset</a>
-                        @endif
-                    </div>
-                </form>
-            </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Pemohon</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Merek / Karya</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Kategori</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($pengajuans as $item)
+                            <tr class="hover:bg-blue-50/50 transition duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-bold text-gray-900">{{ $item->user->name }}</div>
+                                    <div class="text-xs text-gray-500">{{ $item->user->email }}</div>
+                                    <div class="text-xs text-gray-400 mt-1">{{ $item->created_at->format('d M Y') }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-bold text-gray-900">{{ $item->nama_merek }}</div>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                                        {{ $item->jenis }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $item->kategori == 'Fasilitasi' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-orange-100 text-orange-800 border border-orange-200' }}">
+                                        {{ $item->kategori }}
+                                    </span>
+                                    @if($item->kategori == 'Fasilitasi')
+                                        <div class="text-[10px] text-purple-600 mt-1 font-bold">
+                                            Step: {{ $item->tahapan_proses ?? 'Awal' }}
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $colors = [
+                                            'Diajukan' => 'bg-blue-100 text-blue-800 border border-blue-200',
+                                            'Disetujui' => 'bg-green-100 text-green-800 border border-green-200',
+                                            'Ditolak' => 'bg-red-100 text-red-800 border border-red-200',
+                                            'Draft' => 'bg-gray-100 text-gray-800 border border-gray-200',
+                                        ];
+                                        $colorClass = $colors[$item->status] ?? 'bg-gray-100 text-gray-800';
+                                    @endphp
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full {{ $colorClass }}">
+                                        {{ $item->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                                    <a href="{{ route('admin.show', $item->id) }}" class="inline-flex items-center text-white bg-indigo-600 hover:bg-indigo-700 font-bold px-4 py-2 rounded-lg shadow-sm transition transform hover:scale-105">
+                                        Periksa
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    </a>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center">
+                                    <div class="flex flex-col items-center justify-center text-gray-400">
+                                        <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        <span class="text-sm font-medium">Belum ada pengajuan yang sesuai filter.</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="overflow-x-auto bg-white rounded-lg shadow">
-                <table class="w-full divide-y divide-gray-200 table-fixed">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col" class="w-1/12 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                Tanggal
-                            </th>
-                            <th scope="col" class="w-1/4 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Pemohon
-                            </th>
-                            <th scope="col" class="w-auto px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Merek & Jenis
-                            </th>
-                            <th scope="col" class="w-1/12 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
-                                Status
-                            </th>
-                            <th scope="col" class="w-1/6 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Aksi
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($pengajuans as $item)
-                        <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $item->created_at->format('d M Y') }}
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900">{{ $item->user->name }}</div>
-                                <div class="text-sm text-gray-500 truncate max-w-xs" title="{{ $item->user->email }}">
-                                    {{ $item->user->email }}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-900 font-bold">{{ $item->nama_merek }}</div>
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 mt-1">
-                                    {{ $item->jenis }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                @php
-                                    $colors = [
-                                        'Draft' => 'bg-yellow-100 text-yellow-800',
-                                        'Diajukan' => 'bg-blue-100 text-blue-800',
-                                        'Ditinjau' => 'bg-purple-100 text-purple-800',
-                                        'Disetujui' => 'bg-green-100 text-green-800',
-                                        'Ditolak' => 'bg-red-100 text-red-800',
-                                    ];
-                                    $colorClass = $colors[$item->status] ?? 'bg-gray-100 text-gray-800';
-                                @endphp
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $colorClass }}">
-                                    {{ $item->status }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
-                                <a href="{{ route('admin.show', $item->id) }}" class="text-indigo-600 hover:text-indigo-900 font-bold bg-indigo-50 px-4 py-2 rounded-md hover:bg-indigo-100 transition">
-                                    Lihat Detail
-                                </a>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-gray-500 italic">
-                                Belum ada pengajuan masuk.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mt-4 px-2">
-                {{ $pengajuans->withQueryString()->links() }}
+                <div class="p-4 border-t border-gray-100">
+                    {{ $pengajuans->withQueryString()->links() }}
+                </div>
             </div>
         </div>
     </div>
+
+    {{-- SCRIPT CHART.JS (Langsung render data dari Controller) --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('adminChart').getContext('2d');
+            
+            // Data dari Controller Laravel
+            const labels = @json($years);
+            const dataTotals = @json($totals);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Pendaftar',
+                        data: dataTotals,
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)', 
+                        borderColor: '#4f46e5', // Indigo-600
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#4f46e5',
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1e1b4b',
+                            titleFont: { size: 13 },
+                            bodyFont: { size: 14, weight: 'bold' },
+                            padding: 10,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw + ' Pendaftar';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [4, 4], color: '#f3f4f6' },
+                            ticks: { font: { size: 11 }, precision: 0 }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 12, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </x-app-layout>

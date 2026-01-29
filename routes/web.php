@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\PimpinanController;
+// use App\Http\Controllers\PimpinanController; // Hapus atau Comment
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\WelcomeController;
@@ -21,7 +21,6 @@ Route::view('/kebijakan-privasi', 'privacy')->name('privacy');
 Route::view('/syarat-ketentuan', 'terms')->name('terms');
 
 // Dashboard Utama
-// Menggunakan Controller 'index' untuk logika Kuota & Redirect
 Route::get('/dashboard', [PengajuanController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -34,7 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // 2. Pengajuan (Resource)
-    // Ini PENTING: Otomatis membuat route pengajuan.create, store, show, dll.
     Route::resource('pengajuan', PengajuanController::class)->except(['index']);
     
     // 3. Pusat Bantuan
@@ -42,10 +40,10 @@ Route::middleware('auth')->group(function () {
         return view('bantuan');
     })->name('bantuan');
 
-    // 4. Menu Pimpinan
-    Route::get('/pimpinan-dashboard', [PimpinanController::class, 'index'])->name('pimpinan.dashboard');
-    Route::get('/pimpinan/cetak', [PimpinanController::class, 'cetakPdf'])->name('pimpinan.cetak');
-    Route::get('/pimpinan/excel', [PimpinanController::class, 'exportExcel'])->name('pimpinan.excel');
+    // 4. Menu Pimpinan (DIHAPUS)
+    // Route::get('/pimpinan-dashboard', [PimpinanController::class, 'index'])->name('pimpinan.dashboard');
+    // Route::get('/pimpinan/cetak', [PimpinanController::class, 'cetakPdf'])->name('pimpinan.cetak');
+    // Route::get('/pimpinan/excel', [PimpinanController::class, 'exportExcel'])->name('pimpinan.excel');
 });
 
 // Group Admin (Hanya Admin)
@@ -55,8 +53,8 @@ Route::middleware(['auth', 'isAdmin'])->group(function () {
     Route::patch('/admin/pengajuan/{id}', [AdminController::class, 'updateStatus'])->name('admin.updateStatus');
 
     Route::get('/admin/arsip', [ArchiveController::class, 'index'])->name('admin.archives.index');
-Route::post('/admin/arsip', [ArchiveController::class, 'store'])->name('admin.archives.store');
-Route::delete('/admin/arsip/{id}', [ArchiveController::class, 'destroy'])->name('admin.archives.destroy');
+    Route::post('/admin/arsip', [ArchiveController::class, 'store'])->name('admin.archives.store');
+    Route::delete('/admin/arsip/{id}', [ArchiveController::class, 'destroy'])->name('admin.archives.destroy');
 });
 
 require __DIR__.'/auth.php';
