@@ -26,7 +26,19 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        // Validasi Manual untuk field tambahan (atau update ProfileUpdateRequest jika mau)
+        $request->validate([
+            'no_ktp' => ['required', 'string', 'max:20'],
+            'no_hp' => ['required', 'string', 'max:20'],
+            'alamat_ktp' => ['required', 'string', 'max:500'],
+        ]);
+
         $request->user()->fill($request->validated());
+        
+        // Simpan field tambahan manual karena fill() di atas mungkin dibatasi oleh rules default ProfileUpdateRequest
+        $request->user()->no_ktp = $request->no_ktp;
+        $request->user()->no_hp = $request->no_hp;
+        $request->user()->alamat_ktp = $request->alamat_ktp;
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
