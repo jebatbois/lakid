@@ -1,16 +1,112 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-bold text-xl text-gray-900 leading-tight">{{ __('Pusat Bantuan & Panduan') }}</h2>
+    </x-slot>
+
     {{-- State AlpineJS untuk Mengontrol 4 Modal --}}
     <div x-data="{ showModalMerek: false, showModalCipta: false, showModalFile: false, showModalInfoCipta: false }">
-        
-        <x-slot name="header">
-            <h2 class="font-bold text-xl text-gray-900 leading-tight">
-                {{ __('Pusat Bantuan & Layanan') }}
-            </h2>
-        </x-slot>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 
+                {{-- INSERTED: Panduan Penggunaan LAKID (Guide Section) --}}
+                <div class="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-10">
+                    <div class="text-center mb-12">
+                        <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Panduan Penggunaan LAKID</h1>
+                        <p class="text-gray-500 max-w-2xl mx-auto">Ikuti langkah-langkah berikut untuk mendaftarkan akun dan mengajukan Fasilitasi HKI atau Permohonan Surat Rekomendasi Dinas.</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 mb-8 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">1</div>
+                                <div class="flex-grow">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Registrasi & Kelengkapan Profil</h3>
+                                    <p class="text-gray-600 mb-4 text-sm leading-relaxed">Sebelum dapat mengajukan permohonan, Anda wajib memiliki akun dan melengkapi biodata diri.</p>
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-3 text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
+                                            <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <span><strong>Daftar Akun:</strong> Klik tombol "Register", isi Nama, Email, dan Password. Lakukan verifikasi email jika diminta.</span>
+                                        </li>
+                                        <li class="flex items-start gap-3 text-sm text-gray-700 bg-gray-50 p-3 rounded-lg">
+                                            <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <span><strong>Lengkapi Biodata (Wajib):</strong> Masuk ke menu <strong>Profil</strong>. Isi NIK (KTP), Nomor WhatsApp Aktif, dan Alamat Lengkap sesuai KTP.</span>
+                                        </li>
+                                    </ul>
+                                    <div class="mt-4 p-3 bg-yellow-50 text-yellow-800 text-xs rounded border border-yellow-200">⚠ Anda tidak bisa membuat pengajuan jika Biodata Profil belum lengkap.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 mb-8 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">2</div>
+                                <div class="flex-grow">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Memilih Jenis Layanan</h3>
+                                    <p class="text-gray-600 mb-4 text-sm">Pada Dashboard, pilih layanan yang sesuai dengan kebutuhan Anda.</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/30">
+                                            <div class="flex items-center gap-2 mb-2"><span class="text-xl">🎁</span><h4 class="font-bold text-blue-800">Program Fasilitasi</h4></div>
+                                            <p class="text-xs text-gray-600 leading-relaxed mb-2">Pilih ini jika Anda ingin mendaftarkan Merek Dagang dan biayanya <strong>ditanggung penuh oleh Dinas</strong>.</p>
+                                            <ul class="text-xs text-gray-500 list-disc ml-4"><li>Khusus Merek Dagang.</li><li>Wajib punya produk/kemasan siap jual.</li><li>Kuota terbatas.</li></ul>
+                                        </div>
+                                        <div class="border border-indigo-200 rounded-xl p-4 bg-indigo-50/30">
+                                            <div class="flex items-center gap-2 mb-2"><span class="text-xl">📄</span><h4 class="font-bold text-indigo-800"> Permohonan Surat Rekomendasi</h4></div>
+                                            <p class="text-xs text-gray-600 leading-relaxed mb-2">Pilih ini jika Anda ingin mendaftar sendiri ke DJKI namun membutuhkan <strong>Surat Rekomendasi Dinas</strong> untuk keringanan biaya PNBP.</p>
+                                            <ul class="text-xs text-gray-500 list-disc ml-4"><li>Untuk Merek & Hak Cipta.</li><li>Wajib upload Surat Permohonan.</li><li>Selalu buka (Tanpa kuota).</li></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 mb-8 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-purple-500"></div>
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg">3</div>
+                                <div class="flex-grow">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Mengisi Formulir & Upload Berkas</h3>
+                                    <p class="text-gray-600 mb-6 text-sm">Pastikan data yang diinput benar. Data diri akan otomatis terisi dari profil Anda.</p>
+                                    <div class="space-y-6">
+                                        <div>
+                                            <h4 class="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span>Jika memilih Fasilitasi:</h4>
+                                            <ul class="list-decimal ml-5 text-sm text-gray-600 space-y-1"><li>Lengkapi <strong>Data Ekonomi Kreatif</strong> (Sub sektor, Omzet, Tenaga Kerja, dll).</li><li>Masukkan <strong>3 Usulan Nama Merek</strong> yang akan dicek ketersediaannya.</li><li>Upload <strong>Scan KTP</strong>.</li><li>Upload <strong>Scan Tanda Tangan</strong> (di kertas putih).</li><li>Upload <strong>Foto Produk</strong> (Kemasan siap jual, minimal 3 sisi digabung PDF/JPG).</li></ul>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-500"></span>Jika memilih Mandiri:</h4>
+                                            <ul class="list-decimal ml-5 text-sm text-gray-600 space-y-1"><li>Pilih Jenis: <strong>Merek</strong> atau <strong>Hak Cipta</strong>.</li><li>Isi Nama Merek / Judul Ciptaan.</li><li>Upload <strong>Surat Permohonan Rekomendasi</strong> (Wajib).</li><li>Upload kelengkapan lain (NPWP, CV, Surat UMK, Logo/File Ciptaan).</li></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-8 mb-8 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-lg">4</div>
+                                <div class="flex-grow">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-2">Pantau Status & Hasil</h3>
+                                    <p class="text-gray-600 mb-4 text-sm">Cek status pengajuan Anda secara berkala di Dashboard.</p>
+                                    <div class="overflow-x-auto">
+                                        <table class="min-w-full text-sm text-left text-gray-500 border rounded-lg">
+                                            <thead class="bg-gray-50 text-gray-700 uppercase font-bold"><tr><th class="px-4 py-3">Status</th><th class="px-4 py-3">Keterangan</th></tr></thead>
+                                            <tbody class="divide-y divide-gray-100">
+                                                <tr><td class="px-4 py-3"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold">Diajukan</span></td><td class="px-4 py-3">Berkas sudah masuk dan menunggu verifikasi Admin Dinas.</td></tr>
+                                                <tr><td class="px-4 py-3"><span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-bold">Proses DJKI</span></td><td class="px-4 py-3">(Khusus Fasilitasi) Data sedang didaftarkan ke sistem DJKI oleh Dinas.</td></tr>
+                                                <tr><td class="px-4 py-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold">Disetujui / Selesai</span></td><td class="px-4 py-3"><strong>Mandiri:</strong> Surat Rekomendasi terbit (Silakan download).<br><strong>Fasilitasi:</strong> Sertifikat Merek telah terbit/selesai.</td></tr>
+                                                <tr><td class="px-4 py-3"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-bold">Ditolak</span></td><td class="px-4 py-3">Pengajuan ditolak (Cek catatan admin untuk alasan penolakan).</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mb-8 text-center md:text-left">
                     <h3 class="text-lg font-bold text-gray-800">Butuh Bantuan?</h3>
                     <p class="text-gray-600">Bingung cara mendaftar? Klik menu di bawah untuk melihat syarat lengkap atau unduh dokumen panduan.</p>

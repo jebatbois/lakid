@@ -35,23 +35,26 @@
             </div>
 
             {{-- BAGIAN KANAN: Fixed Visual Area --}}
-            <div class="hidden lg:block w-[55%] h-full relative overflow-hidden bg-blue-900">
-                <img class="absolute inset-0 h-full w-full object-cover opacity-80" 
-                     src="https://images.unsplash.com/photo-1634153721382-7d3d193155e8?q=80&w=2070&auto=format&fit=crop" 
+              <div class="hidden lg:block w-[55%] h-full relative overflow-hidden bg-blue-900">
+                 <img class="absolute inset-0 h-full w-full object-cover object-center transform scale-90 opacity-50" 
+                     src="img/login.jpg" 
                      alt="Creative Background">
+
+                 <!-- Dark overlay to improve text contrast -->
+                 <div class="absolute inset-0 bg-black/60"></div>
+
+                 <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-purple-900/40 to-transparent mix-blend-multiply"></div>
                 
-                <div class="absolute inset-0 bg-gradient-to-t from-blue-900/90 via-purple-900/50 to-transparent mix-blend-multiply"></div>
-                
-                <div class="absolute bottom-0 left-0 p-16 text-white z-20 max-w-2xl">
+                <div class="absolute bottom-0 left-0 p-16 text-white z-30 max-w-2xl">
                     <div class="mb-6">
                          <span class="px-3 py-1 bg-white/10 backdrop-blur border border-white/20 rounded-full text-xs font-bold tracking-wider uppercase">Inovasi Daerah</span>
                     </div>
-                    <blockquote class="text-4xl font-extrabold leading-tight mb-6 drop-shadow-lg">
+                    <blockquote class="text-4xl md:text-5xl font-extrabold leading-tight mb-6 drop-shadow-2xl">
                         "Lindungi ide kreatifmu hari ini, untuk nilai ekonomi yang abadi di masa depan."
                     </blockquote>
                     <div class="flex items-center gap-4">
                         <div class="h-1 w-12 bg-blue-400 rounded-full"></div>
-                        <p class="font-medium text-blue-100">Dinas Pariwisata Prov. Kepri</p>
+                        <p class="font-semibold text-blue-100/95">Dinas Pariwisata Prov. Kepri</p>
                     </div>
                 </div>
             </div>

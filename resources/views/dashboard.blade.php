@@ -95,7 +95,7 @@
             {{-- BAGIAN 1: PILIHAN PENGAJUAN --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 
-                {{-- Opsi 1: Fasilitasi (Gratis) --}}
+                {{-- Opsi 1: Fasilitasi --}}
                 <div class="group bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col relative overflow-hidden">
                     {{-- Background Decoration --}}
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-8 -mt-8 z-0 transition-transform group-hover:scale-110"></div>
@@ -122,7 +122,7 @@
                         </h3>
                         
                         <p class="text-gray-500 text-sm leading-relaxed mb-8 flex-grow">
-                            Layanan pendaftaran HKI <strong>gratis (0 Rupiah)</strong>. Biaya ditanggung penuh oleh Dinas dengan pendampingan intensif hingga sertifikat terbit.
+                            Layanan pendaftaran HKI <strong>(0 Rupiah)</strong>. Biaya ditanggung penuh oleh Dinas dengan pendampingan intensif hingga sertifikat terbit.
                         </p>
 
                         @if($kuotaPenuh)
@@ -132,7 +132,7 @@
                             </button>
                         @else
                             <a href="{{ route('pengajuan.create', ['kategori' => 'Fasilitasi']) }}" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-2 group-hover:gap-3">
-                                Daftar Gratis
+                                Daftar
                                 <svg class="w-5 h-5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                             </a>
                         @endif

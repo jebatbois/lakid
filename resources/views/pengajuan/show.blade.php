@@ -35,7 +35,7 @@
                     <div>
                         {{-- BADGE KATEGORI --}}
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wide mb-2 {{ $pengajuan->kategori == 'Fasilitasi' ? 'bg-blue-100 text-blue-800' : 'bg-indigo-100 text-indigo-800' }}">
-                            {{ $pengajuan->kategori == 'Fasilitasi' ? 'Program Fasilitasi (Gratis)' : 'Jalur Mandiri (Rekomendasi)' }}
+                            {{ $pengajuan->kategori == 'Fasilitasi' ? 'Program Fasilitasi' : 'Jalur Mandiri (Rekomendasi)' }}
                         </span>
 
                         <h1 class="text-3xl font-extrabold text-gray-900">

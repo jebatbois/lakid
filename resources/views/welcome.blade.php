@@ -38,15 +38,15 @@
                 </div>
 
                 {{-- Menu Kanan --}}
-                <div class="flex items-center gap-4">
+                <div class="flex flex-wrap items-center gap-4">
                     @if (Route::has('login'))
                         @auth
                             <a href="{{ url('/dashboard') }}" class="font-bold text-gray-700 hover:text-blue-600 transition">Dashboard</a>
                         @else
-                            <a href="{{ route('login') }}" class="hidden sm:block text-sm font-bold text-gray-600 hover:text-blue-600 transition">Masuk</a>
+                            <a href="{{ route('login') }}" class="text-sm font-bold text-gray-600 hover:text-blue-600 transition mr-2">Masuk</a>
 
                             @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="text-sm px-6 py-3 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-600/30 transform hover:-translate-y-0.5">
+                                <a href="{{ route('register') }}" class="text-sm sm:px-6 sm:py-3 px-3 py-2 flex-shrink-0 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-600/30 transform hover:-translate-y-0.5">
                                     Daftar Sekarang
                                 </a>
                             @endif
@@ -86,19 +86,21 @@
 
             {{-- Subheadline (Copywriting Baru) --}}
             <p class="mt-4 max-w-2xl mx-auto text-xl text-blue-100 mb-10 leading-relaxed font-medium drop-shadow">
-                Platform resmi Dinas Pariwisata Provinsi Kepulauan Riau. Akses program <strong>Fasilitasi Pendaftaran HKI (Gratis)</strong> atau ajukan <strong>Surat Rekomendasi</strong> untuk keringanan biaya secara mandiri.
+                Platform resmi Dinas Pariwisata Provinsi Kepulauan Riau.
+                {{-- Span ini akan jadi baris baru HANYA di layar Desktop (md ke atas) --}}
+                <span class="md:block mt-1">
+                    Akses program <strong>Fasilitasi Pendaftaran HKI</strong> atau ajukan <strong>Surat Rekomendasi</strong> untuk keringanan biaya secara mandiri.
+                </span>
             </p>
 
             {{-- CTA Buttons --}}
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 {{-- Tombol Utama --}}
-                <a href="{{ route('register') }}" class="px-8 py-4 text-lg font-bold rounded-full text-blue-900 bg-white hover:bg-blue-50 shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1">
-                    Mulai Pengajuan 🚀
+                <a href="{{ route('register') }}" class="px-8 py-4 text-lg font-bold rounded-full text-blue-900 bg-white shadow-md hover:shadow-xl transition transform hover:-translate-y-0.5">
+                    Mulai Mendaftar
                 </a>
-                {{-- Tombol Kedua --}}
-                <a href="#layanan" class="px-8 py-4 text-lg font-bold rounded-full text-white bg-white/10 border border-white/30 hover:bg-white/20 backdrop-blur-md shadow-sm transition">
-                    Pelajari Syarat
-                </a>
+                {{-- Tombol Kedua (Butuh Bantuan?) --}}
+                <a href="#bantuan" class="px-6 py-3 text-lg font-bold rounded-full text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition">Butuh Bantuan?</a>
             </div>
 
         </div>
@@ -157,6 +159,43 @@
     </section>
 
     {{-- SECTION LAYANAN & BANTUAN (GREY BACKGROUND) --}}
+    {{-- HELP / GUIDE SECTION (visible via #bantuan) --}}
+    <section id="bantuan" class="py-24 bg-white relative border-b border-gray-100">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Panduan Singkat Penggunaan</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Ikuti langkah singkat berikut untuk mendaftarkan akun, memilih layanan, dan mengajukan permohonan.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-6 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-lg text-gray-900 mb-3">1. Registrasi & Profil</h3>
+                    <p class="text-sm text-gray-600 mb-2">Daftar akun, verifikasi email, lalu lengkapi biodata (NIK, WA, alamat).</p>
+                    <p class="text-xs text-yellow-800 bg-yellow-50 p-2 rounded">Biodata harus lengkap untuk mengajukan permohonan.</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-lg text-gray-900 mb-3">2. Pilih Layanan</h3>
+                    <p class="text-sm text-gray-600 mb-2">Di Dashboard pilih antara <strong>Fasilitasi</strong> (khusus merek) atau <strong>Jalur Mandiri</strong> (Surat Rekomendasi untuk keringanan PNBP).</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-lg text-gray-900 mb-3">3. Isi Formulir & Upload</h3>
+                    <p class="text-sm text-gray-600 mb-2">Unggah KTP, tanda tangan, file karya/logo, dan dokumen pendukung sesuai jenis layanan.</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm">
+                    <h3 class="font-bold text-lg text-gray-900 mb-3">4. Pantau Status</h3>
+                    <p class="text-sm text-gray-600 mb-2">Cek status pengajuan di Dashboard. Jika butuh bantuan, hubungi admin via Dashboard kontak.</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="#layanan" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 transition shadow">Lihat Layanan & Dokumen</a>
+            </div>
+        </div>
+    </section>
+
     <section id="layanan" class="py-24 bg-gray-50 relative border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
@@ -175,7 +214,7 @@
                         </div>
                         <p class="text-gray-500 text-sm mb-6">Panduan untuk melindungi identitas usaha seperti Nama Brand, Logo, dan Simbol Dagang.</p>
                         
-                        <ul class="space-y-3 mt-auto">
+                        <ul class="space-y-3 mb-6">
                             <li>
                                 <button @click="showModalMerek = true" class="flex items-center text-gray-600 hover:text-blue-600 transition group text-sm w-full text-left outline-none focus:outline-none font-medium p-2 hover:bg-blue-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center mr-3 text-xs">📄</span>
@@ -195,6 +234,8 @@
                                 </a>
                             </li>
                         </ul>
+
+                        <div class="mt-auto pt-4 border-t border-gray-100"></div>
                     </div>
                 </div>
 
@@ -207,7 +248,7 @@
                         </div>
                         <p class="text-gray-500 text-sm mb-6">Perlindungan untuk karya seni, sastra, musik, film, foto, dan program komputer.</p>
                         
-                        <ul class="space-y-3 mt-auto">
+                        <ul class="space-y-3 mb-6">
                             <li>
                                 <button @click="showModalInfoCipta = true" class="flex items-center text-gray-600 hover:text-yellow-600 transition group text-sm w-full text-left outline-none focus:outline-none font-medium p-2 hover:bg-yellow-50 rounded-lg">
                                     <span class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-yellow-100 flex items-center justify-center mr-3 text-xs">ℹ️</span>
@@ -227,6 +268,8 @@
                                 </button>
                             </li>
                         </ul>
+
+                        <div class="mt-auto pt-4 border-t border-gray-100"></div>
                     </div>
                 </div>
 
